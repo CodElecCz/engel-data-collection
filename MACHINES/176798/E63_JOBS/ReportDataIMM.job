@@ -1,0 +1,17 @@
+JOB DataDebug RESPONSE "ReportDataIMM.log";
+REPORT DataDebug APPEND "ReportDataIMM.dat"
+
+START IMMEDIATE
+STOP NEVER
+CYCLIC SHOT 1
+PARAMETERS
+DATE,
+TIME,
+COUNT,
+SetDescPrt,
+ActCntMld,
+SetDescMld,
+ActCntCyc,
+ActTimCyc,
+ActStsMach;
+
