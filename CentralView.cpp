@@ -1,7 +1,7 @@
 #include "CentralView.h"
-#include "BrowserView.h"
-#include "FileView.h"
-#include "SettingsView.h"
+#include "browser/BrowserView.h"
+#include "file/FileView.h"
+#include "settings/SettingsView.h"
 
 #include "ui_CentralView.h"
 

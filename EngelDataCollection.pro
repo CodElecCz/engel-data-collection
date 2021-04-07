@@ -2,7 +2,7 @@ QT       += core gui sql
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
-CONFIG += c++11
+CONFIG += c++17
 
 # You can make your code fail to compile if it uses deprecated APIs.
 # In order to do so, uncomment the following line.
@@ -10,32 +10,36 @@ CONFIG += c++11
 
 SOURCES += \
     CentralView.cpp \
-    FileCheck.cpp \
-    FileView.cpp \
+    file/FileCheck.cpp \
+    file/FileCheckModel.cpp \
+    file/FileView.cpp \
     MainWindow.cpp \
-    BrowserView.cpp \
-    ConnectionWidget.cpp \
-    SettingsView.cpp \
+    browser/BrowserView.cpp \
+    browser/ConnectionWidget.cpp \
+    settings/Settings.cpp \
+    settings/SettingsView.cpp \
     main.cpp \
-    QsqlConnectionDialog.cpp
+    browser/QsqlConnectionDialog.cpp
 
 HEADERS += \
     CentralView.h \
-    FileCheck.h \
-    FileView.h \
+    file/FileCheck.h \
+    file/FileCheckModel.h \
+    file/FileView.h \
     MainWindow.h \
-    BrowserView.h \
-    ConnectionWidget.h \
-    QsqlConnectionDialog.h \
-    SettingsView.h
+    browser/BrowserView.h \
+    browser/ConnectionWidget.h \
+    browser/QsqlConnectionDialog.h \
+    settings/Settings.h \
+    settings/SettingsView.h
 
 FORMS += \
     CentralView.ui \
-    FileView.ui \
+    file/FileView.ui \
     MainWindow.ui \
-    BrowserView.ui \
-    QsqlConnectionDialog.ui \
-    SettingsView.ui
+    browser/BrowserView.ui \
+    browser/QsqlConnectionDialog.ui \
+    settings/SettingsView.ui
 
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin

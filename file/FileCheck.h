@@ -17,6 +17,8 @@ public:
 
     bool fileExist() const;
 
+    QString fileName() const;
+
 private:
 
     struct SFileCheckInfo

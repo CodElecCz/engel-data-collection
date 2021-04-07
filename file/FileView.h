@@ -7,7 +7,7 @@ namespace Ui {
 class FileView;
 }
 
-class FileCheck;
+class FileCheckModel;
 
 class FileView : public QWidget
 {
@@ -17,12 +17,15 @@ public:
     explicit FileView(QWidget *parent = nullptr);
     ~FileView();
 
+private:
+    void settings();
+
 private slots:
     void on_pushButton_clicked(bool checked);
 
 private:
     Ui::FileView*       ui;
-    QList<FileCheck*>   m_fileList;
+    FileCheckModel*     m_model;
 };
 
 #endif // FILEVIEW_H

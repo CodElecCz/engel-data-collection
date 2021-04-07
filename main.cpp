@@ -49,16 +49,25 @@
 ****************************************************************************/
 
 #include "MainWindow.h"
+#include "settings/Settings.h"
 
 #include <QtCore>
 #include <QtWidgets>
+#include <QCoreApplication>
 
 int main(int argc, char *argv[])
 {
+    QCoreApplication::setAttribute(Qt::AA_UseStyleSheetPropagationInWidgetStyles, true);
+    QCoreApplication::setAttribute(Qt::AA_EnableHighDpiScaling, true);
+
+    QCoreApplication::setOrganizationName(Settings::cOrganizationName);
+    QCoreApplication::setApplicationName(Settings::cApplicationName);
+    QCoreApplication::setApplicationVersion(Settings::cVersion);
+
     QApplication app(argc, argv);
 
     MainWindow mainWindow;
-    mainWindow.setWindowTitle(QObject::tr("ENGEL Data Collection"));           
+    mainWindow.setWindowTitle(QCoreApplication::applicationName());
     mainWindow.show();
 
     return app.exec();

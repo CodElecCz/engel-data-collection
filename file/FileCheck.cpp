@@ -36,6 +36,13 @@ void FileCheck::timer_timeout()
     }
 }
 
+QString FileCheck::fileName() const
+{
+    QFileInfo fileInfo(m_path);
+
+    return fileInfo.baseName();
+}
+
 FileCheck::SFileCheckInfo FileCheck::getFileInfo() const
 {
     FileCheck::SFileCheckInfo info;
@@ -49,10 +56,9 @@ FileCheck::SFileCheckInfo FileCheck::getFileInfo() const
         info.fileSize = fileInfo.size();
         info.lastModified = fileInfo.lastModified();
 
-        //parse header
         QFile file(m_path);
-
         file.copy(m_path + ".check");
+
         QFile fileCheck(m_path + ".check");
         if(!fileCheck.open(QIODevice::ReadOnly))
         {
@@ -69,6 +75,7 @@ FileCheck::SFileCheckInfo FileCheck::getFileInfo() const
                 QString line = in.readLine();
                 if(row<0)
                 {
+                    //parse header
                     info.header = line.split(",");
                     row = 0;
                 }

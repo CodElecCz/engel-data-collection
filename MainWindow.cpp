@@ -1,8 +1,9 @@
 #include "MainWindow.h"
-#include "BrowserView.h"
 #include "CentralView.h"
-#include "FileView.h"
-#include "SettingsView.h"
+#include "browser/BrowserView.h"
+#include "file/FileView.h"
+#include "settings/SettingsView.h"
+#include "settings/Settings.h"
 
 #include "ui_MainWindow.h"
 
@@ -180,16 +181,14 @@ void addConnectionsFromCommandline(const QStringList &args, BrowserView *browser
 }
 
 void addConnectionsFromSettings(BrowserView *browser)
-{
-    QString configFilePath = QFileInfo(QCoreApplication::applicationFilePath()).filePath();
-    configFilePath.replace(".exe", ".ini");
-    QFile configFile(configFilePath);
+{    
+    QFile configFile(Settings::iniFilePath());
     if(!configFile.exists())
         return;
 
     QUrl url;
 
-    QSettings config(configFilePath, QSettings::IniFormat);
+    QSettings config(Settings::iniFilePath(), QSettings::IniFormat);
     config.setIniCodec("UTF-8");
 
     url.setScheme(config.value(QString("odbc/driver")).toString());
