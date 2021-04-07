@@ -1,6 +1,8 @@
 #include "FileCheckModel.h"
 #include "FileCheck.h"
 
+#include <QDebug>
+
 FileCheckModel::FileCheckModel(QObject *parent) :
     QAbstractTableModel(parent),
     m_fileList()
@@ -35,7 +37,7 @@ QVariant FileCheckModel::data(const QModelIndex& index, int role) const
 
     if (role == Qt::DisplayRole)
     {
-        FileCheck* fileCheck = m_fileList.at(index.row());
+        FileCheck* fileCheck = m_fileList.values().at(index.row());
 
         switch(index.column())
         {
@@ -55,7 +57,7 @@ QVariant FileCheckModel::data(const QModelIndex& index, int role) const
     }
     else if (role == Qt::UserRole)
     {
-        const FileCheck* fileCheck = m_fileList.at(index.row());
+        const FileCheck* fileCheck = m_fileList.values().at(index.row());
 
         return fileCheck;
     }
@@ -112,15 +114,15 @@ Qt::ItemFlags FileCheckModel::flags(const QModelIndex &index) const
 
 void FileCheckModel::startAll()
 {
-    foreach(auto file, m_fileList)
+    foreach(auto file, m_fileList.values())
     {
-        file->start(1000);
+        file->start(2000);
     }
 }
 
 void FileCheckModel::stopAll()
 {
-    foreach(auto file, m_fileList)
+    foreach(auto file, m_fileList.values())
     {
         file->stop();
     }
@@ -128,15 +130,28 @@ void FileCheckModel::stopAll()
 
 void FileCheckModel::clearAll()
 {
-    foreach(auto file, m_fileList)
+    foreach(auto file, m_fileList.values())
     {
         delete file;
     }
     m_fileList.clear();
 }
 
-void FileCheckModel::fileAdd(const QString& path)
+void FileCheckModel::fileAdd(const QString& path, int id)
 {
-    FileCheck* fileCheck = new FileCheck(path, this);
-    m_fileList.append(fileCheck);
+    FileCheck* fileCheck = new FileCheck(path, id, this);
+
+    connect(fileCheck, SIGNAL(fileChanged(int)), this, SLOT(fileCheck_fileChanged(int)));
+
+    m_fileList.insert(id, fileCheck);
+}
+
+void FileCheckModel::fileCheck_fileChanged(int id)
+{
+    qDebug() << "FileCheckModel::fileCheck_fileChanged(" << id << ")";
+
+    QModelIndex indexStart = this->index(id-1, 0);
+    QModelIndex indexEnd = this->index(id - 1, EColumn_Size-1);
+    if(indexStart.isValid() && indexEnd.isValid())
+        emit dataChanged(indexStart, indexEnd);
 }

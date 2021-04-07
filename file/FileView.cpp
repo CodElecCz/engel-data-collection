@@ -60,7 +60,7 @@ void FileView::settings()
         {
             QString filePath = QString("%1%2%3").arg(path).arg(vid.toString()).arg(reportData);
 
-            m_model->fileAdd(filePath);
+            m_model->fileAdd(filePath, id);
             id++;
         }
 

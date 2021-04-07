@@ -7,6 +7,8 @@ class FileCheck;
 
 class FileCheckModel : public QAbstractTableModel
 {
+    Q_OBJECT
+
 public:
     FileCheckModel(QObject *parent = nullptr);
     ~FileCheckModel();
@@ -31,10 +33,13 @@ public:
     void startAll();
     void stopAll();
     void clearAll();
-    void fileAdd(const QString& path);
+    void fileAdd(const QString& path, int id);
+
+private slots:
+    void fileCheck_fileChanged(int id);
 
 private:
-    QList<FileCheck*>   m_fileList;
+    QMap<int, FileCheck*>   m_fileList;
 };
 
 #endif // FILECHECKMODEL_H

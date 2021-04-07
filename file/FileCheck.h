@@ -10,7 +10,7 @@ class FileCheck : public QObject
     Q_OBJECT
 
 public:
-    FileCheck(const QString& path, QObject* parent = nullptr);
+    FileCheck(const QString& path, int id, QObject* parent = nullptr);
 
     void start(int timeMs);
     void stop();
@@ -21,17 +21,27 @@ public:
     QString fileDir() const;
     QDateTime fileModified() const;
 
+signals:
+    void fileChanged(int id);
+
 private:
 
     struct SFileCheckInfo
     {
-        bool        valid;
+        bool        exists;
         int         fileSize;
         QDateTime   lastModified;
         int         nbOfRecords;        
         QStringList header;        
 
-        SFileCheckInfo() : valid(false), fileSize(0), nbOfRecords(0), header() {};
+        bool operator==(const SFileCheckInfo& other) const {
+            return exists == other.exists &&
+                    fileSize == other.fileSize &&
+                    lastModified == other.lastModified &&
+                    nbOfRecords == other.nbOfRecords;
+        }
+
+        SFileCheckInfo() : exists(false), fileSize(0), nbOfRecords(0), header() {};
     };
 
     SFileCheckInfo getFileInfo() const;
@@ -40,8 +50,13 @@ private slots:
     void timer_timeout();
 
 private:
-    QString     m_path;
-    QTimer      m_timer;
+    QString         m_path;
+    QTimer          m_timer;
+    SFileCheckInfo  m_fileInfo;
+    int             m_id;
 };
+
+Q_DECLARE_METATYPE(FileCheck*)
+Q_DECLARE_METATYPE(const FileCheck*)
 
 #endif // FILECHECK_H

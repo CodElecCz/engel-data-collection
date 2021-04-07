@@ -5,15 +5,19 @@
 #include <QDebug>
 #include <QDir>
 
-FileCheck::FileCheck(const QString& path, QObject* parent) :
+FileCheck::FileCheck(const QString& path, int id, QObject* parent) :
     QObject(parent),
-    m_path(path)
+    m_path(path),
+    m_fileInfo(),
+    m_id(id)
 {
     connect(&m_timer, SIGNAL(timeout()), this, SLOT(timer_timeout()));
 }
 
 void FileCheck::start(int timeMs)
 {
+    timer_timeout();
+
     m_timer.start(timeMs);
 }
 
@@ -30,10 +34,14 @@ bool FileCheck::fileExist() const
 }
 
 void FileCheck::timer_timeout()
-{    
-    if(fileExist())
+{        
+    SFileCheckInfo info  = getFileInfo();
+
+    if(!(info == m_fileInfo))
     {
-        SFileCheckInfo info  = getFileInfo();
+        m_fileInfo = info;
+
+        emit fileChanged(m_id);
     }
 }
 
@@ -67,13 +75,13 @@ QDateTime FileCheck::fileModified() const
 
 FileCheck::SFileCheckInfo FileCheck::getFileInfo() const
 {
-    FileCheck::SFileCheckInfo info;
+    SFileCheckInfo info;
 
     QFileInfo fileInfo(m_path);
 
-    info.valid = fileInfo.exists();
+    info.exists = fileInfo.exists();
 
-    if(info.valid)
+    if(info.exists)
     {
         info.fileSize = fileInfo.size();
         info.lastModified = fileInfo.lastModified();
@@ -113,7 +121,7 @@ FileCheck::SFileCheckInfo FileCheck::getFileInfo() const
 
             fileCheck.remove();
         }
-    }
+    }   
 
     return info;
 }
