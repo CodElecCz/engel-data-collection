@@ -41,6 +41,12 @@ QVariant FileCheckModel::data(const QModelIndex& index, int role) const
         {
         case EColumn_Name:
             return fileCheck->fileName();
+        case EColumn_Exist:
+            return fileCheck->fileExist();
+        case EColumn_LastModified:
+            return fileCheck->fileModified().toString("yyyy-MM-dd hh:mm:ss");
+        case EColumn_Dir:
+            return fileCheck->fileDir();
         }
     }
     else if (role == Qt::CheckStateRole)
@@ -66,6 +72,12 @@ QVariant FileCheckModel::headerData(int section, Qt::Orientation orientation, in
             {
             case EColumn_Name:
                 return tr("Name");
+            case EColumn_Exist:
+                return tr("Exist");
+            case EColumn_LastModified:
+                return tr("LastModified");
+            case EColumn_Dir:
+                return tr("Directory");
 
             default:
                 return tr("unknown");
@@ -73,7 +85,7 @@ QVariant FileCheckModel::headerData(int section, Qt::Orientation orientation, in
         }
         else if (orientation == Qt::Vertical)
         {
-            return QString::number(section);
+            return QString::number(section+1);
         }
     }
     return QVariant();
@@ -126,13 +138,5 @@ void FileCheckModel::clearAll()
 void FileCheckModel::fileAdd(const QString& path)
 {
     FileCheck* fileCheck = new FileCheck(path, this);
-
-    if(fileCheck->fileExist())
-    {
-        m_fileList.append(fileCheck);
-    }
-    else
-    {
-        delete fileCheck;
-    }
+    m_fileList.append(fileCheck);
 }

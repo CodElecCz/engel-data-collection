@@ -3,6 +3,7 @@
 #include <QFileInfo>
 #include <QTextStream>
 #include <QDebug>
+#include <QDir>
 
 FileCheck::FileCheck(const QString& path, QObject* parent) :
     QObject(parent),
@@ -40,7 +41,28 @@ QString FileCheck::fileName() const
 {
     QFileInfo fileInfo(m_path);
 
-    return fileInfo.baseName();
+    return fileInfo.fileName();
+}
+
+QString FileCheck::filePath() const
+{
+    QFileInfo fileInfo(m_path);
+
+    return fileInfo.filePath();
+}
+
+QString FileCheck::fileDir() const
+{
+    QFileInfo fileInfo(m_path);
+
+    return fileInfo.absolutePath();
+}
+
+QDateTime FileCheck::fileModified() const
+{
+    QFileInfo fileInfo(m_path);
+
+    return fileInfo.lastModified();
 }
 
 FileCheck::SFileCheckInfo FileCheck::getFileInfo() const

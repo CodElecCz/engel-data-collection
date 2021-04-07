@@ -16,8 +16,10 @@ public:
     void stop();
 
     bool fileExist() const;
-
     QString fileName() const;
+    QString filePath() const;
+    QString fileDir() const;
+    QDateTime fileModified() const;
 
 private:
 

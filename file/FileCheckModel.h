@@ -20,6 +20,9 @@ public:
     typedef enum _EColumn
     {
         EColumn_Name = 0,
+        EColumn_Exist,
+        EColumn_LastModified,
+        EColumn_Dir,
 
         /*...*/
         EColumn_Size

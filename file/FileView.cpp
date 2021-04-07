@@ -18,6 +18,16 @@ FileView::FileView(QWidget *parent) :
     settings();
 
     ui->tableView->setModel(m_model);
+
+    ui->tableView->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
+    ui->tableView->horizontalHeader()->setCascadingSectionResizes(false);
+    //ui->tableView->verticalHeader()->setVisible(false);
+
+    ui->tableView->horizontalHeader()->setSectionResizeMode(FileCheckModel::EColumn_Name, QHeaderView::ResizeToContents);
+    ui->tableView->horizontalHeader()->setSectionResizeMode(FileCheckModel::EColumn_Exist, QHeaderView::ResizeToContents);
+    ui->tableView->horizontalHeader()->setSectionResizeMode(FileCheckModel::EColumn_LastModified, QHeaderView::ResizeToContents);
+
+    ui->tableView->horizontalHeader()->setSectionResizeMode(FileCheckModel::EColumn_Dir, QHeaderView::Stretch);
 }
 
 FileView::~FileView()
@@ -38,7 +48,7 @@ void FileView::settings()
     QString path = config.value(QString("engel_machines/path")).toString();
     QString reportData = config.value(QString("engel_reportdata/file")).toString();
 
-    int id = 0;
+    int id = 1;
     QVariant vid;
     do
     {
