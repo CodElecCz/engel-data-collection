@@ -2,6 +2,8 @@
 #include "support/style/CustomStyle.h"
 #include "support/dialog/WaitDialog.h"
 
+#include "ui_AboutDialog.h"
+
 #include <QApplication>
 #include <QAction>
 #include <QMenu>
@@ -20,7 +22,8 @@ MainWindowExt::MainWindowExt(QWidget *parent) :
     m_topDockTitles(),
     m_bottomDockTitles(),
     m_leftDockTitles(),
-    m_rightDockTitles()
+    m_rightDockTitles(),
+    m_appStartTime(QDateTime::currentDateTime())
 {
 
 }
@@ -180,9 +183,29 @@ void MainWindowExt::tabifyRightDockWidget(QDockWidget *dockwidget, const QString
     }
 }
 
-void MainWindowExt::About()
-{
 
+#include <QCoreApplication>
+#include <QDateTime>
+
+QDateTime MainWindowExt::buildDateTime()
+{
+    QDateTime dateTime;
+    dateTime.setDate(QLocale("en_US").toDate(QString(__DATE__).simplified(), "MMM d yyyy"));
+    dateTime.setTime(QTime::fromString(__TIME__, "hh:mm:ss"));
+    return dateTime;
+}
+
+void MainWindowExt::aboutDialog()
+{
+    QDialog *aboutDialog = new QDialog(this, nullptr);
+    Ui_AboutDialog aboutUi;
+    aboutUi.setupUi(aboutDialog);
+    aboutUi.labelAppNameText->setText(QCoreApplication::applicationName());
+    aboutUi.labelAppVerText->setText(QCoreApplication::applicationVersion());
+    aboutUi.labelBuildText->setText(buildDateTime().toString("yyyy-MM-dd hh:mm:ss"));
+    aboutUi.labelStartText->setText(m_appStartTime.toString("yyyy-MM-dd hh:mm:ss"));
+
+    aboutDialog->show();
 }
 
 void MainWindowExt::styleChanged_triggered(QAction *action)

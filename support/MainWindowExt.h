@@ -5,6 +5,7 @@
 #include <QWidget>
 #include <QMainWindow>
 #include <QDockWidget>
+#include <QDateTime>
 
 class MainWindowExt : public QMainWindow
 {
@@ -18,10 +19,7 @@ public:
     void tabifyDockWidget(QDockWidget *dockwidget, const QString& title, const Qt::DockWidgetArea& area);
 
     //language support
-    void retranslate();
-
-    //about dialog
-    void About();
+    void retranslate();   
 
     //style
     void createStyleMenu(QMenu* styleMenu);
@@ -29,6 +27,12 @@ public:
     //wait spinnbox
     static void waitShow(int timeoutMs = -1);
     static void waitHide(int delayMs = -1);
+
+    static QDateTime buildDateTime();
+
+public slots:
+    //about dialog
+    void aboutDialog();
 
 protected slots:
     void styleChanged_triggered(QAction *action);
@@ -52,6 +56,8 @@ private:
     QStringList         m_bottomDockTitles;
     QStringList         m_leftDockTitles;
     QStringList         m_rightDockTitles;
+
+    QDateTime           m_appStartTime;
 };
 
 #endif // MAIN_WINDOW_EXT_H

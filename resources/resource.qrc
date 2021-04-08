@@ -1,5 +1,6 @@
 <RCC>
-    <qresource prefix="/">        
-        <file>application.ico</file>        
+    <qresource prefix="/">
+        <file>application.ico</file>
+        <file>CodElec.png</file>
     </qresource>
 </RCC>

@@ -47,7 +47,8 @@ FORMS += \
     MainWindow.ui \
     browser/BrowserView.ui \
     browser/QsqlConnectionDialog.ui \
-    settings/SettingsView.ui
+    settings/SettingsView.ui \
+    support/about/AboutDialog.ui
 
 RESOURCES += \
     resources/style/DarkStyle.qrc \

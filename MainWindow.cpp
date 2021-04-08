@@ -57,6 +57,8 @@ void MainWindow::initializeMenuBar()
     //helpMenu->addAction(QObject::tr("About Qt"), []() { qApp->aboutQt(); });
 #endif
     createStyleMenu(ui->menuStyle);
+
+    connect(ui->actionAbout, SIGNAL(triggered()), this, SLOT(aboutDialog()));
 }
 
 void MainWindow::initializeToolBar()
