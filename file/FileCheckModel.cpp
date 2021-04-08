@@ -175,7 +175,7 @@ void FileCheckModel::checkAdd(const QString& path, int index, int machineId)
 
 void FileCheckModel::fileCheck_fileChanged(int id)
 {
-    qDebug() << "FileCheckModel::fileCheck_fileChanged(" << id << ")";
+    //qDebug() << "FileCheckModel::fileCheck_fileChanged(" << id << ")";
 
     QModelIndex indexStart = this->index(id-1, 0);
     QModelIndex indexEnd = this->index(id - 1, EColumn_Size-1);

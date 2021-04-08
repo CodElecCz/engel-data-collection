@@ -63,6 +63,8 @@ void FileCheck::timer_timeout()
     if(!(info == m_fileInfo))
     {
         m_fileInfo = info;
+
+        qInfo() << "FileCheck change, machine_id: " << m_machineId;
     }
 
     m_checkTime = QDateTime::currentDateTime();

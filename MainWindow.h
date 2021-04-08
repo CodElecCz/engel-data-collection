@@ -16,6 +16,7 @@ class CentralView;
 class FileView;
 class SettingsView;
 class StatusIndicator;
+class LogView;
 
 class MainWindow : public MainWindowExt
 {
@@ -34,6 +35,8 @@ private:
 
     void setView(CentralView::EView view);
 
+    void createLogWindow(const QString& name, bool showWindow);
+
 private slots:
     void toolBarButtons_buttonClicked(int);
 
@@ -48,6 +51,8 @@ private:
     SettingsView*   m_settingsView;
 
     CentralView*    m_centralView;
+
+    LogView*        m_logView;
 
     QButtonGroup*       m_toolBarButtons;
     CentralView::EView  m_lastView;

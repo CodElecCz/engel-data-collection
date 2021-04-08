@@ -83,10 +83,10 @@ void FileView::settings()
     uint32_t intervalShift = config.value(QString("engel_machines/interval_shift_ms")).toUInt();
     if(check)
     {
-        m_model->checkStartAll(intervalShift);
-        ui->checkButton->setChecked(true);
-
         emit statusMessage(MessageType::Enable, "File check started");
+
+        m_model->checkStartAll(intervalShift);
+        ui->checkButton->setChecked(true);      
     }
     else
     {
@@ -98,8 +98,8 @@ void FileView::on_checkButton_clicked(bool checked)
 {
     if(checked)
     {
-        m_model->checkStartAll();
         emit statusMessage(MessageType::Enable, "File check started");
+        m_model->checkStartAll();        
     }
     else
     {

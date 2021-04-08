@@ -50,6 +50,7 @@
 
 #include "MainWindow.h"
 #include "settings/Settings.h"
+#include "log/Log.h"
 
 #include <QtCore>
 #include <QtWidgets>
@@ -83,12 +84,19 @@ void customMessageHandler(QtMsgType type, const QMessageLogContext &context, con
         break;
     }
 
+    //to file
     QFile file(Settings::logFilePath());
     file.open(QIODevice::WriteOnly | QIODevice::Append);
-    QTextStream ts(&file);
-    ts << dt << " [" << stype << "] " << msg << endl;
+    QTextStream ts(&file);      
+
+    QString logMsg = QString("%1 [%2] %3").arg(dt).arg(stype).arg(msg);
+    ts << logMsg << endl;
     file.close();
 
+    //to application
+    Log::instance().message(logMsg);
+
+    //check file size
     QFileInfo fileInfo(Settings::logFilePath());
     if(fileInfo.size()>1024*1024)
     {
@@ -109,7 +117,7 @@ void customMessageHandler(QtMsgType type, const QMessageLogContext &context, con
         file.rename(newFileInfo.absoluteFilePath());
     }
 
-    // Call the default handler.
+    // Call the default handler
     (*QT_DEFAULT_MESSAGE_HANDLER)(type, context, msg);
 }
 

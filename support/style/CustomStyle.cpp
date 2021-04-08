@@ -96,8 +96,8 @@ void CustomStyle::polish(QApplication *app)
     //Setting Qt To Ignore Windows DPI Text Size Personalization
     QFont defaultFont = QApplication::font();
 
-    int dpi = qApp->desktop()->logicalDpiX();
-    qInfo() << "Application DPI: " << dpi;
+    int dpi = qApp->desktop()->logicalDpiX();   
+
     if(dpi<=cDefaultDPI_100p)
     {
         defaultFont.setPixelSize(11); //11
@@ -126,6 +126,8 @@ void CustomStyle::polish(QApplication *app)
     {
     case ECustomStyle_Light:
         {
+            qInfo() << "Application Light style, DPI: " << dpi;
+
             QString qsStylesheet = "";
 
             //Qt components style
@@ -151,6 +153,8 @@ void CustomStyle::polish(QApplication *app)
         break;
     case ECustomStyle_Dark:
         {
+            qInfo() << "Application Dark style, DPI: " << dpi;
+
             QString qsStylesheet = "";
 
             //Qt components style

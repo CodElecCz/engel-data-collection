@@ -5,6 +5,7 @@
 #include "settings/SettingsView.h"
 #include "settings/Settings.h"
 #include "support/controls/StatusIndicator.h"
+#include "log/LogView.h"
 
 #include "ui_MainWindow.h"
 
@@ -39,8 +40,10 @@ MainWindow::MainWindow(QWidget *parent) :
 
     m_centralView(new CentralView(m_browserView, m_fileView, m_settingsView, this)),
 
+    m_logView(nullptr),
+
     m_toolBarButtons(new QButtonGroup(this)),
-    m_lastView(CentralView::EView_none),
+    m_lastView(CentralView::EView_none),    
 
     m_statusDbs(new StatusIndicator("Database", Qt::green, this)),
     m_statusFile(new StatusIndicator("FileCheck", Qt::green, this))
@@ -49,13 +52,15 @@ MainWindow::MainWindow(QWidget *parent) :
 
     this->setCentralWidget(m_centralView);   
 
+    createLogWindow("Log", true);
+
     initializeMenuBar();
     initializeToolBar();
     initializeStatusBar();
 
     initializeWindow();
 
-    initializeConnection();
+    initializeConnection();   
 }
 
 MainWindow::~MainWindow()
@@ -236,33 +241,33 @@ void MainWindow::browserView_statusMessage(int type, const QString &msg)
         m_statusDbs->setOn(true);
         m_statusDbs->setMsg(cStatusConnect, Qt::green);
 
-        qInfo() << msg;
+        qInfo().noquote() << msg;
         break;
     case MessageType::Warning:
         m_statusDbs->setOn(true);
         m_statusDbs->setMsg(cStatusWarning, Qt::yellow);
 
-        qWarning() << msg;
+        qWarning().noquote() << msg;
         break;
     case MessageType::Error:
         m_statusDbs->setOn(true);
         m_statusDbs->setMsg(cStatusError, Qt::red);
 
-        qCritical() << msg;
+        qCritical().noquote() << msg;
         break;
     case MessageType::Connect:
     case MessageType::Enable:
         m_statusDbs->setOn(true);
         m_statusDbs->setMsg(cStatusConnect, Qt::green);
 
-        qInfo() << msg;
+        qInfo().noquote() << msg;
         break;
     case MessageType::Disconnect:
     case MessageType::Disable:
         m_statusDbs->setOn(false);
         m_statusDbs->setMsg(cStatusDisconnect);
 
-        qInfo() << msg;
+        qInfo().noquote() << msg;
         break;
     }
 };
@@ -280,36 +285,59 @@ void MainWindow::fileView_statusMessage(int type, const QString &msg)
         m_statusFile->setOn(true);
         m_statusFile->setMsg(cStatusConnect, Qt::green);
 
-        qInfo() << msg;
+        qInfo().noquote() << msg;
         break;
     case MessageType::Warning:
         m_statusFile->setOn(true);
         m_statusFile->setMsg(cStatusWarning, Qt::yellow);
 
-        qWarning() << msg;
+        qWarning().noquote() << msg;
         break;
     case MessageType::Error:
         m_statusFile->setOn(true);
         m_statusFile->setMsg(cStatusError, Qt::red);
 
-        qCritical() << msg;
+        qCritical().noquote() << msg;
         break;
     case MessageType::Connect:
     case MessageType::Enable:
         m_statusFile->setOn(true);
         m_statusFile->setMsg(cStatusEnabled, Qt::green);
 
-        qInfo() << msg;
+        qInfo().noquote() << msg;
         break;
     case MessageType::Disconnect:
     case MessageType::Disable:
         m_statusFile->setOn(false);
         m_statusFile->setMsg(cStatusDisabled);
 
-        qInfo() << msg;
+        qInfo().noquote() << msg;
         break;
     }
 };
+
+void MainWindow::createLogWindow(const QString& name, bool showWindow)
+{
+    QDockWidget *dock = new QDockWidget(name, this);
+    dock->setAllowedAreas(Qt::LeftDockWidgetArea | Qt::RightDockWidgetArea | Qt::BottomDockWidgetArea);
+    dock->setFeatures(dock->features() & ~QDockWidget::DockWidgetFloatable);
+
+    m_logView = new LogView(dock);
+    m_logView->setObjectName("LogView");
+
+    dock->setWidget(m_logView);
+    dock->setObjectName(name);
+
+    ui->menuWindow->addAction(dock->toggleViewAction());
+
+    MainWindowExt::tabifyDockWidget(dock, name, Qt::BottomDockWidgetArea);
+    //addDockWidget(Qt::LeftDockWidgetArea, dock);
+
+    if(showWindow)
+        dock->show();
+    else
+        dock->hide();
+}
 
 void addConnectionsFromCommandline(const QStringList &args, BrowserView *browser)
 {
