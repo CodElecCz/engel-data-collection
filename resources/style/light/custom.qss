@@ -1,0 +1,17 @@
+QToolButton[accessibleName="FileManager"] {
+    qproperty-icon:url(:/light/custom/file-management.svg);
+    min-width: 55px;
+    padding: 2px;
+}
+
+QToolButton[accessibleName="DatabaseBrowser"] {
+    qproperty-icon:url(:/light/custom/database.svg);
+    min-width: 55px;
+    padding: 2px;
+}
+
+QToolButton[accessibleName="Settings"] {
+    qproperty-icon:url(:/light/custom/settings.svg);
+    min-width: 55px;
+    padding: 2px;
+}
