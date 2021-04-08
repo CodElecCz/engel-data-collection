@@ -41,6 +41,14 @@ FORMS += \
     browser/QsqlConnectionDialog.ui \
     settings/SettingsView.ui
 
+RESOURCES += \
+    resources/style/DarkStyle.qrc \
+    resources/style/LightStyle.qrc \
+    resources/resource.qrc
+
+RC_FILE += \
+    resources/resource.rc
+
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin
 else: unix:!android: target.path = /opt/$${TARGET}/bin
