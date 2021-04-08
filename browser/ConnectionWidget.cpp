@@ -99,23 +99,28 @@ void ConnectionWidget::refresh()
     QStringList connectionNames = QSqlDatabase::connectionNames();
 
     bool gotActiveDb = false;
-    for (int i = 0; i < connectionNames.count(); ++i) {
+    for (int i = 0; i < connectionNames.count(); ++i)
+    {
         QTreeWidgetItem *root = new QTreeWidgetItem(tree);
         QSqlDatabase db = QSqlDatabase::database(connectionNames.at(i), false);
         root->setText(0, qDBCaption(db));
-        if (connectionNames.at(i) == activeDb) {
+        if (connectionNames.at(i) == activeDb)
+        {
             gotActiveDb = true;
             setActive(root);
         }
-        if (db.isOpen()) {
+        if (db.isOpen())
+        {
             QStringList tables = db.tables();
-            for (int t = 0; t < tables.count(); ++t) {
+            for (int t = 0; t < tables.count(); ++t)
+            {
                 QTreeWidgetItem *table = new QTreeWidgetItem(root);
                 table->setText(0, tables.at(t));
             }
         }
     }
-    if (!gotActiveDb) {
+    if (!gotActiveDb)
+    {
         activeDb = connectionNames.value(0);
         setActive(tree->topLevelItem(0));
     }
@@ -137,7 +142,8 @@ static void qSetBold(QTreeWidgetItem *item, bool bold)
 
 void ConnectionWidget::setActive(QTreeWidgetItem *item)
 {
-    for (int i = 0; i < tree->topLevelItemCount(); ++i) {
+    for (int i = 0; i < tree->topLevelItemCount(); ++i)
+    {
         if (tree->topLevelItem(i)->font(0).bold())
             qSetBold(tree->topLevelItem(i), false);
     }
@@ -154,9 +160,11 @@ void ConnectionWidget::on_tree_itemActivated(QTreeWidgetItem *item, int /* colum
     if (!item)
         return;
 
-    if (!item->parent()) {
+    if (!item->parent())
+    {
         setActive(item);
-    } else {
+    } else
+    {
         setActive(item->parent());
         emit tableActivated(item->text(0));
     }

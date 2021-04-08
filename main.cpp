@@ -54,6 +54,7 @@
 #include <QtCore>
 #include <QtWidgets>
 #include <QCoreApplication>
+#include <QDebug>
 
 // Get the default Qt message handler.
 static const QtMessageHandler QT_DEFAULT_MESSAGE_HANDLER = qInstallMessageHandler(0);
@@ -61,7 +62,7 @@ static const QtMessageHandler QT_DEFAULT_MESSAGE_HANDLER = qInstallMessageHandle
 void customMessageHandler(QtMsgType type, const QMessageLogContext &context, const QString &msg)
 {
     // Handle the messages!
-    QString dt = QDateTime::currentDateTime().toString("yyyy-MM-dd hh:mm:ss");
+    QString dt = QDateTime::currentDateTime().toString("yyyy.MM.dd hh:mm:ss");
     QString stype;
     switch (type)
     {
@@ -115,6 +116,8 @@ void customMessageHandler(QtMsgType type, const QMessageLogContext &context, con
 
 int main(int argc, char *argv[])
 {   
+    int ret = 0;
+
     QCoreApplication::setAttribute(Qt::AA_UseStyleSheetPropagationInWidgetStyles, true);
     QCoreApplication::setAttribute(Qt::AA_EnableHighDpiScaling, true);
 
@@ -128,11 +131,26 @@ int main(int argc, char *argv[])
 
     qInfo() << "Application start, ver: " << Settings::cVersion;
 
-    MainWindow mainWindow;
-    mainWindow.setWindowTitle(QCoreApplication::applicationName());
-    mainWindow.show();
+    try
+    {
+        MainWindow mainWindow;
+        mainWindow.setWindowTitle(QCoreApplication::applicationName());
+        mainWindow.show();
 
-    int ret = app.exec();
+        app.exec();
+    }
+    catch (QException& e)
+    {
+        qCritical() << "Exception: " << e.what();
+
+        return EXIT_FAILURE;
+    }
+    catch(...)
+    {
+        qCritical() << "Unknown exception";
+
+        return EXIT_FAILURE;
+    }
 
     qInfo() << "Application close, return code: " << ret;
 

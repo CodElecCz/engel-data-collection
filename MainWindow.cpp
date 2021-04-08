@@ -27,7 +27,6 @@ namespace
 
     const QString cStatusError("Error");
     const QString cStatusWarning("Warning");
-
 }
 
 MainWindow::MainWindow(QWidget *parent) :
@@ -236,22 +235,34 @@ void MainWindow::browserView_statusMessage(int type, const QString &msg)
     case MessageType::Info:
         m_statusDbs->setOn(true);
         m_statusDbs->setMsg(cStatusConnect, Qt::green);
+
+        qInfo() << msg;
         break;
     case MessageType::Warning:
         m_statusDbs->setOn(true);
         m_statusDbs->setMsg(cStatusWarning, Qt::yellow);
+
+        qWarning() << msg;
         break;
     case MessageType::Error:
         m_statusDbs->setOn(true);
         m_statusDbs->setMsg(cStatusError, Qt::red);
+
+        qCritical() << msg;
         break;
     case MessageType::Connect:
+    case MessageType::Enable:
         m_statusDbs->setOn(true);
         m_statusDbs->setMsg(cStatusConnect, Qt::green);
+
+        qInfo() << msg;
         break;
     case MessageType::Disconnect:
+    case MessageType::Disable:
         m_statusDbs->setOn(false);
         m_statusDbs->setMsg(cStatusDisconnect);
+
+        qInfo() << msg;
         break;
     }
 };
@@ -268,24 +279,34 @@ void MainWindow::fileView_statusMessage(int type, const QString &msg)
     case MessageType::Info:
         m_statusFile->setOn(true);
         m_statusFile->setMsg(cStatusConnect, Qt::green);
+
+        qInfo() << msg;
         break;
     case MessageType::Warning:
         m_statusFile->setOn(true);
         m_statusFile->setMsg(cStatusWarning, Qt::yellow);
+
+        qWarning() << msg;
         break;
     case MessageType::Error:
         m_statusFile->setOn(true);
         m_statusFile->setMsg(cStatusError, Qt::red);
+
+        qCritical() << msg;
         break;
     case MessageType::Connect:
     case MessageType::Enable:
         m_statusFile->setOn(true);
         m_statusFile->setMsg(cStatusEnabled, Qt::green);
+
+        qInfo() << msg;
         break;
     case MessageType::Disconnect:
     case MessageType::Disable:
         m_statusFile->setOn(false);
         m_statusFile->setMsg(cStatusDisabled);
+
+        qInfo() << msg;
         break;
     }
 };
@@ -309,7 +330,9 @@ void addConnectionsFromCommandline(const QStringList &args, BrowserView *browser
                                                url.port(-1));
 
         if (err.type() != QSqlError::NoError)
-            qDebug() << "Unable to open connection:" << err;
+        {
+            qCritical() << "Unable to open connection:" << err;
+        }
     }
 }
 
@@ -339,7 +362,8 @@ bool addConnectionsFromSettings(BrowserView *browser)
 
     if (err.type() != QSqlError::NoError)
     {
-        qDebug() << "Unable to open connection:" << err;
+        qCritical() << "Unable to open connection:" << err;
+
         return false;
     }
 

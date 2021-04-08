@@ -52,7 +52,7 @@ QVariant FileCheckModel::data(const QModelIndex& index, int role) const
         case EColumn_FileSize:
             return QString("%1 kB").arg(fileCheck->fileSize()/1024);
         case EColumn_LastModified:
-            return fileCheck->fileModified().toString("yyyy-MM-dd hh:mm:ss");
+            return fileCheck->fileModified().toString("yyyy.MM.dd hh:mm:ss");
         case EColumn_LastCheck:
             return fileCheck->fileCheckTime().toString("hh:mm:ss");
         case EColumn_Dir:

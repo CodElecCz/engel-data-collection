@@ -188,13 +188,15 @@ void BrowserView::showTable(const QString &t)
     model->setEditStrategy(QSqlTableModel::OnRowChange);
     model->setTable(connectionWidget->currentDatabase().driver()->escapeIdentifier(t, QSqlDriver::TableName));
     model->select();
+
     if (model->lastError().type() != QSqlError::NoError)
+    {
         emit statusMessage(MessageType::Error, model->lastError().text());
+    }
 
     table->setModel(model);
     table->setEditTriggers(QAbstractItemView::DoubleClicked|QAbstractItemView::EditKeyPressed);
-    connect(table->selectionModel(), &QItemSelectionModel::currentRowChanged,
-            this, &BrowserView::currentChanged);
+    connect(table->selectionModel(), &QItemSelectionModel::currentRowChanged, this, &BrowserView::currentChanged);
 
     updateActions();
 }
@@ -281,7 +283,8 @@ void BrowserView::updateActions()
     revertAction->setEnabled(tm);
     selectAction->setEnabled(tm);
 
-    if (tm) {
+    if (tm)
+    {
         QSqlTableModel::EditStrategy es = tm->editStrategy();
         fieldStrategyAction->setChecked(es == QSqlTableModel::OnFieldChange);
         rowStrategyAction->setChecked(es == QSqlTableModel::OnRowChange);

@@ -150,7 +150,7 @@ FileCheck::SFileCheckInfo FileCheck::getFileInfo() const
                 {
                     //record
                     row++;
-                }
+                }               
             }
             file.close();
 
