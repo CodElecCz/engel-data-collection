@@ -54,6 +54,9 @@
        <property name="text">
         <string>File check</string>
        </property>
+       <property name="checkable">
+        <bool>true</bool>
+       </property>
        <property name="toolButtonStyle">
         <enum>Qt::ToolButtonTextBesideIcon</enum>
        </property>

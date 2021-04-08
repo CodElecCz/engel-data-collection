@@ -178,6 +178,9 @@ void MainWindow::setView(CentralView::EView view)
 
 void MainWindow::initializeConnection()
 {    
+    connect(m_browserView, SIGNAL(statusMessage(int, const QString &)), this, SLOT(browserView_statusMessage(int, const QString &)));
+    connect(m_fileView, SIGNAL(statusMessage(int, const QString &)), this, SLOT(fileView_statusMessage(int, const QString &)));
+
     //addConnectionsFromCommandline(app.arguments(), &browser);
     bool succeed = addConnectionsFromSettings(m_browserView);
     if(!succeed)
@@ -189,6 +192,8 @@ void MainWindow::initializeConnection()
     {
         m_statusDbs->setOn(true);
         m_statusDbs->setMsg(cStatusConnect, Qt::green);
+
+        m_fileView->setView();
     }
 
     if (QSqlDatabase::connectionNames().isEmpty())
@@ -216,9 +221,7 @@ void MainWindow::initializeConnection()
                                   Q_ARG(QString, user),
                                   Q_ARG(QString, pasword));
 #endif
-    }       
-
-    connect(m_browserView, SIGNAL(statusMessage(int, const QString &)), this, SLOT(browserView_statusMessage(int, const QString &)));
+    }          
 }
 
 void MainWindow::browserView_statusMessage(int type, const QString &msg)
@@ -249,6 +252,40 @@ void MainWindow::browserView_statusMessage(int type, const QString &msg)
     case MessageType::Disconnect:
         m_statusDbs->setOn(false);
         m_statusDbs->setMsg(cStatusDisconnect);
+        break;
+    }
+};
+
+void MainWindow::fileView_statusMessage(int type, const QString &msg)
+{
+    ui->statusbar->showMessage(msg);
+    m_statusFile->setToolTip(msg);
+
+    MessageType msgType = static_cast<MessageType>(type);
+
+    switch(msgType)
+    {
+    case MessageType::Info:
+        m_statusFile->setOn(true);
+        m_statusFile->setMsg(cStatusConnect, Qt::green);
+        break;
+    case MessageType::Warning:
+        m_statusFile->setOn(true);
+        m_statusFile->setMsg(cStatusWarning, Qt::yellow);
+        break;
+    case MessageType::Error:
+        m_statusFile->setOn(true);
+        m_statusFile->setMsg(cStatusError, Qt::red);
+        break;
+    case MessageType::Connect:
+    case MessageType::Enable:
+        m_statusFile->setOn(true);
+        m_statusFile->setMsg(cStatusEnabled, Qt::green);
+        break;
+    case MessageType::Disconnect:
+    case MessageType::Disable:
+        m_statusFile->setOn(false);
+        m_statusFile->setMsg(cStatusDisabled);
         break;
     }
 };

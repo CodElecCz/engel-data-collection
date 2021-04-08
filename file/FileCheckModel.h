@@ -24,6 +24,8 @@ public:
         EColumn_Name = 0,
         EColumn_Machine,
         EColumn_Exist,
+        EColumn_FileSize,
+        EColumn_LastCheck,
         EColumn_LastModified,
         EColumn_Dir,
 
@@ -31,16 +33,20 @@ public:
         EColumn_Size
     } EScenarioColumn;
 
-    void startAll();
-    void stopAll();
+    void checkStartAll(int delay = -1);
+    void checkStopAll();
+    void checkAdd(const QString& path, int index, int machineId);
+    void checkInterval(uint32_t intervalMs);
+
     void clearAll();
-    void fileCheckAdd(const QString& path, int index, int machineId);
 
 private slots:
     void fileCheck_fileChanged(int id);
 
 private:
     QMap<int, FileCheck*>   m_fileList;
+    uint32_t                m_intervalMs;
+    uint32_t                m_intervalShiftMs;
 };
 
 #endif // FILECHECKMODEL_H

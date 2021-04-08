@@ -5,7 +5,9 @@
 
 FileCheckModel::FileCheckModel(QObject *parent) :
     QAbstractTableModel(parent),
-    m_fileList()
+    m_fileList(),
+    m_intervalMs(10000),
+    m_intervalShiftMs(400)
 {
 
 }
@@ -47,8 +49,12 @@ QVariant FileCheckModel::data(const QModelIndex& index, int role) const
             return QString::number(fileCheck->machineId());
         case EColumn_Exist:
             return fileCheck->fileExist();
+        case EColumn_FileSize:
+            return QString("%1 kB").arg(fileCheck->fileSize()/1024);
         case EColumn_LastModified:
             return fileCheck->fileModified().toString("yyyy-MM-dd hh:mm:ss");
+        case EColumn_LastCheck:
+            return fileCheck->fileCheckTime().toString("hh:mm:ss");
         case EColumn_Dir:
             return fileCheck->fileDir();
         }
@@ -80,8 +86,12 @@ QVariant FileCheckModel::headerData(int section, Qt::Orientation orientation, in
                 return tr("Machine");
             case EColumn_Exist:
                 return tr("Exist");
+            case EColumn_FileSize:
+                return tr("Size");
             case EColumn_LastModified:
                 return tr("LastModified");
+            case EColumn_LastCheck:
+                return tr("Check");
             case EColumn_Dir:
                 return tr("Directory");
 
@@ -116,15 +126,21 @@ Qt::ItemFlags FileCheckModel::flags(const QModelIndex &index) const
      return flags;
 }
 
-void FileCheckModel::startAll()
+void FileCheckModel::checkStartAll(int delayMs)
 {
+    if(delayMs>=0)
+        m_intervalShiftMs = delayMs;
+
+    int delay = 0;
     foreach(auto file, m_fileList.values())
-    {
-        file->start(2000);
+    {        
+        file->start(m_intervalMs, delay);
+
+        delay += m_intervalShiftMs;
     }
 }
 
-void FileCheckModel::stopAll()
+void FileCheckModel::checkStopAll()
 {
     foreach(auto file, m_fileList.values())
     {
@@ -141,13 +157,20 @@ void FileCheckModel::clearAll()
     m_fileList.clear();
 }
 
-void FileCheckModel::fileCheckAdd(const QString& path, int index, int machineId)
+void FileCheckModel::checkInterval(uint32_t intervalMs)
+{
+    m_intervalMs = intervalMs;
+}
+
+void FileCheckModel::checkAdd(const QString& path, int index, int machineId)
 {
     FileCheck* fileCheck = new FileCheck(path, index, machineId, this);
 
     connect(fileCheck, SIGNAL(fileChanged(int)), this, SLOT(fileCheck_fileChanged(int)));
 
+    beginResetModel();
     m_fileList.insert(index, fileCheck);
+    endResetModel();
 }
 
 void FileCheckModel::fileCheck_fileChanged(int id)

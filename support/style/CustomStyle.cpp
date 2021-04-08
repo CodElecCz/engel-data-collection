@@ -97,7 +97,7 @@ void CustomStyle::polish(QApplication *app)
     QFont defaultFont = QApplication::font();
 
     int dpi = qApp->desktop()->logicalDpiX();
-    qDebug() << "Application DPI: " << dpi;
+    qInfo() << "Application DPI: " << dpi;
     if(dpi<=cDefaultDPI_100p)
     {
         defaultFont.setPixelSize(11); //11
@@ -118,7 +118,6 @@ void CustomStyle::polish(QApplication *app)
     {
         defaultFont.setPixelSize(21);
     }
-
 
     app->setFont(defaultFont);
 

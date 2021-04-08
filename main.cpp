@@ -55,20 +55,86 @@
 #include <QtWidgets>
 #include <QCoreApplication>
 
-int main(int argc, char *argv[])
+// Get the default Qt message handler.
+static const QtMessageHandler QT_DEFAULT_MESSAGE_HANDLER = qInstallMessageHandler(0);
+
+void customMessageHandler(QtMsgType type, const QMessageLogContext &context, const QString &msg)
 {
+    // Handle the messages!
+    QString dt = QDateTime::currentDateTime().toString("yyyy-MM-dd hh:mm:ss");
+    QString stype;
+    switch (type)
+    {
+    case QtMsgType::QtInfoMsg:
+        stype = QString("Info");
+        break;
+    case QtMsgType::QtDebugMsg:
+        stype = QString("Debug");
+        break;
+    case QtMsgType::QtWarningMsg:
+        stype = QString("Warning");
+        break;
+    case QtMsgType::QtCriticalMsg:
+        stype = QString("Critical");
+        break;
+    case QtMsgType::QtFatalMsg:
+        stype = QString("Fatal");
+        break;
+    }
+
+    QFile file(Settings::logFilePath());
+    file.open(QIODevice::WriteOnly | QIODevice::Append);
+    QTextStream ts(&file);
+    ts << dt << " [" << stype << "] " << msg << endl;
+    file.close();
+
+    QFileInfo fileInfo(Settings::logFilePath());
+    if(fileInfo.size()>1024*1024)
+    {
+        QStringList pathList = Settings::logFilePath().split(".");
+
+        QString suffix = pathList.last();
+        pathList.removeLast();
+
+        QFileInfo newFileInfo;
+
+        int index = 0;
+        do
+        {
+            newFileInfo.setFile(pathList.join(".") + "_" + QString::number(index,10) + "." + suffix);
+            index++;
+        }while(newFileInfo.exists());
+
+        file.rename(newFileInfo.absoluteFilePath());
+    }
+
+    // Call the default handler.
+    (*QT_DEFAULT_MESSAGE_HANDLER)(type, context, msg);
+}
+
+
+int main(int argc, char *argv[])
+{   
     QCoreApplication::setAttribute(Qt::AA_UseStyleSheetPropagationInWidgetStyles, true);
     QCoreApplication::setAttribute(Qt::AA_EnableHighDpiScaling, true);
 
+    QApplication app(argc, argv);
+
+    qInstallMessageHandler(customMessageHandler);
+
     QCoreApplication::setOrganizationName(Settings::cOrganizationName);
     QCoreApplication::setApplicationName(Settings::cApplicationName);
-    QCoreApplication::setApplicationVersion(Settings::cVersion);
+    QCoreApplication::setApplicationVersion(Settings::cVersion);       
 
-    QApplication app(argc, argv);
+    qInfo() << "Application start, ver: " << Settings::cVersion;
 
     MainWindow mainWindow;
     mainWindow.setWindowTitle(QCoreApplication::applicationName());
     mainWindow.show();
 
-    return app.exec();
+    int ret = app.exec();
+
+    qInfo() << "Application close, return code: " << ret;
+
+    return ret;
 }

@@ -10,20 +10,36 @@ FileCheck::FileCheck(const QString& path, int index, int machineId, QObject* par
     m_path(path),
     m_fileInfo(),
     m_index(index),
-    m_machineId(machineId)
+    m_machineId(machineId),
+    m_checkTime(),
+    m_timeMs(10000)
 {
+    m_delay.setSingleShot(true);
+
     connect(&m_timer, SIGNAL(timeout()), this, SLOT(timer_timeout()));
+    connect(&m_delay, SIGNAL(timeout()), this, SLOT(delay_start()));
 }
 
-void FileCheck::start(int timeMs)
+QDateTime FileCheck::fileCheckTime() const
 {
-    timer_timeout();
+    return m_checkTime;
+}
 
-    m_timer.start(timeMs);
+void FileCheck::start(int timeMs, int delayMs)
+{
+    m_timeMs = timeMs;
+
+    if(delayMs<=0)
+    {
+        delay_start();
+    }
+    else
+        m_delay.start(delayMs);
 }
 
 void FileCheck::stop()
 {
+    m_delay.stop();
     m_timer.stop();
 }
 
@@ -34,6 +50,12 @@ bool FileCheck::fileExist() const
     return fileInfo.exists();
 }
 
+void FileCheck::delay_start()
+{
+    timer_timeout();
+    m_timer.start(m_timeMs);
+}
+
 void FileCheck::timer_timeout()
 {        
     SFileCheckInfo info  = getFileInfo();
@@ -41,9 +63,11 @@ void FileCheck::timer_timeout()
     if(!(info == m_fileInfo))
     {
         m_fileInfo = info;
-
-        emit fileChanged(m_index);
     }
+
+    m_checkTime = QDateTime::currentDateTime();
+
+    emit fileChanged(m_index);
 }
 
 QString FileCheck::fileName() const
@@ -65,6 +89,13 @@ QString FileCheck::fileDir() const
     QFileInfo fileInfo(m_path);
 
     return fileInfo.absolutePath();
+}
+
+int FileCheck::fileSize() const
+{
+    QFileInfo fileInfo(m_path);
+
+    return fileInfo.size();
 }
 
 QDateTime FileCheck::fileModified() const

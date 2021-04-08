@@ -10,8 +10,16 @@ Settings::Settings()
 
 QString Settings::iniFilePath()
 {
-    QString configFilePath = QFileInfo(QCoreApplication::applicationFilePath()).filePath();
-    configFilePath.replace(".exe", ".ini");
+    QString iniFilePath = QFileInfo(QCoreApplication::applicationFilePath()).filePath();
+    iniFilePath.replace(".exe", ".ini");
 
-    return configFilePath;
+    return iniFilePath;
+}
+
+QString Settings::logFilePath()
+{
+    QString logFilePath = QFileInfo(QCoreApplication::applicationFilePath()).filePath();
+    logFilePath.replace(".exe", ".log");
+
+    return logFilePath;
 }

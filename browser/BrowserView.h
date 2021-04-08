@@ -63,15 +63,6 @@ QT_FORWARD_DECLARE_CLASS(QPushButton)
 QT_FORWARD_DECLARE_CLASS(QTextEdit)
 QT_FORWARD_DECLARE_CLASS(QSqlError)
 
-enum MessageType
-{
-    Info = 0,
-    Warning,
-    Error,
-    Connect,
-    Disconnect
-};
-
 class BrowserView: public QWidget, private Ui::BrowserView
 {
     Q_OBJECT

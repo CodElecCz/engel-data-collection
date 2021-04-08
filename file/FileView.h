@@ -17,6 +17,11 @@ public:
     explicit FileView(QWidget *parent = nullptr);
     ~FileView();
 
+    void setView();
+
+signals:
+    void statusMessage(int type, const QString &message);
+
 private:
     void settings();
 

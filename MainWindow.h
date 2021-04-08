@@ -36,7 +36,9 @@ private:
 
 private slots:
     void toolBarButtons_buttonClicked(int);
+
     void browserView_statusMessage(int type, const QString &message);
+    void fileView_statusMessage(int type, const QString &message);
 
 private:
     Ui::MainWindow* ui;

@@ -4,6 +4,17 @@
 #include <QObject>
 #include <QString>
 
+enum MessageType
+{
+    Info = 0,
+    Warning,
+    Error,
+    Connect,
+    Disconnect,
+    Enable,
+    Disable
+};
+
 class Settings
 {
 public:
@@ -14,6 +25,7 @@ public:
     static inline char const       cVersion[] = "v1.0.0";
 
     static QString iniFilePath();
+    static QString logFilePath();
 };
 
 #endif // SETTINGS_H

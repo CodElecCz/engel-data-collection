@@ -50,6 +50,7 @@
 
 #include "BrowserView.h"
 #include "QsqlConnectionDialog.h"
+#include "settings/Settings.h"
 
 #include <QtWidgets>
 #include <QtSql>
