@@ -17,7 +17,7 @@ void addConnectionsFromCommandline(const QStringList &args, BrowserView *browser
 void addConnectionsFromSettings(BrowserView *browser);
 
 MainWindow::MainWindow(QWidget *parent) :
-    QMainWindow(parent),
+    MainWindowExt(parent),
     ui(new Ui::MainWindow),
 
     m_browserView(new BrowserView(this)),
@@ -46,6 +46,7 @@ MainWindow::~MainWindow()
 
 void MainWindow::initializeMenuBar()
 {
+#if 0
     QMenu *fileMenu = ui->menubar->addMenu(QObject::tr("&File"));
     fileMenu->addAction(QObject::tr("Add &Connection..."), [&]() { m_browserView->addConnection(); });
     fileMenu->addSeparator();
@@ -54,6 +55,8 @@ void MainWindow::initializeMenuBar()
     QMenu *helpMenu = ui->menubar->addMenu(QObject::tr("&Help"));
     helpMenu->addAction(QObject::tr("About"), [&]() { m_browserView->about(); });
     //helpMenu->addAction(QObject::tr("About Qt"), []() { qApp->aboutQt(); });
+#endif
+    createStyleMenu(ui->menuStyle);
 }
 
 void MainWindow::initializeToolBar()

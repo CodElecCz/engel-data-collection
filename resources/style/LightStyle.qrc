@@ -1,41 +1,9 @@
 <RCC>
     <qresource prefix="/">
         <file>light/style.qss</file>
-        <file>light/custom/antenna.svg</file>
-        <file>light/custom/edit.svg</file>
-        <file>light/custom/list.svg</file>
-        <file>light/custom/list_add.svg</file>
-        <file>light/custom/list_remove.svg</file>
-        <file>light/custom/play.svg</file>
-        <file>light/custom/save.svg</file>
         <file>light/custom.qss</file>
-        <file>light/custom/zoom_in.svg</file>
-        <file>light/custom/zoom_out.svg</file>
-        <file>light/custom/remove_item.svg</file>
-        <file>light/custom/arrow_left.svg</file>
-        <file>light/custom/arrow_right.svg</file>
-        <file>light/custom/export.svg</file>
-        <file>light/custom/import.svg</file>
-        <file>light/custom/form.svg</file>
-        <file>light/custom/refresh.svg</file>
-        <file>light/custom/player-pause.svg</file>
-        <file>light/custom/player-play.svg</file>
-        <file>light/custom/player-stop.svg</file>
-        <file>light/custom/reload.svg</file>
         <file>light/custom/settings.svg</file>
-        <file>light/custom/bell.svg</file>
-        <file>light/custom/plus.svg</file>
-        <file>light/custom/add.svg</file>
-        <file>light/custom/file-management.svg</file>
-        <file>light/custom/video-player.svg</file>
-        <file>light/custom/video-editor.svg</file>
-        <file>light/custom/drag.svg</file>
-        <file>light/custom/player-play_round.svg</file>
-        <file>light/custom/report.svg</file>
-        <file>light/custom/download.svg</file>
-        <file>light/custom/copy.svg</file>
-        <file>light/custom/connection.svg</file>
-        <file>light/custom/select-all.svg</file>
-        <file>light/custom/magnifying.svg</file>
+        <file>light/custom/file-management.svg</file>        
+        <file>light/custom/database.svg</file>
     </qresource>
 </RCC>

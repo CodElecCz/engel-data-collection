@@ -1,6 +1,7 @@
 #ifndef MAINWINDOW_H
 #define MAINWINDOW_H
 
+#include "support/MainWindowExt.h"
 #include "CentralView.h"
 
 #include <QMainWindow>
@@ -15,7 +16,7 @@ class CentralView;
 class FileView;
 class SettingsView;
 
-class MainWindow : public QMainWindow
+class MainWindow : public MainWindowExt
 {
     Q_OBJECT
 
