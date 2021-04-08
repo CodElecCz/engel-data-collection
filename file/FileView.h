@@ -20,8 +20,8 @@ public:
 private:
     void settings();
 
-private slots:
-    void on_pushButton_clicked(bool checked);
+private slots:    
+    void on_checkButton_clicked(bool checked);
 
 private:
     Ui::FileView*       ui;

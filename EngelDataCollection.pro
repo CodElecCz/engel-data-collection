@@ -21,6 +21,7 @@ SOURCES += \
     main.cpp \
     browser/QsqlConnectionDialog.cpp \
     support/MainWindowExt.cpp \
+    support/controls/StatusIndicator.cpp \
     support/controls/WaitingSpinner.cpp \
     support/dialog/WaitDialog.cpp \
     support/style/CustomStyle.cpp
@@ -37,6 +38,7 @@ HEADERS += \
     settings/Settings.h \
     settings/SettingsView.h \
     support/MainWindowExt.h \
+    support/controls/StatusIndicator.h \
     support/controls/WaitingSpinner.h \
     support/dialog/WaitDialog.h \
     support/style/CustomStyle.h

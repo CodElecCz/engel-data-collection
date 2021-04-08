@@ -43,6 +43,8 @@ QVariant FileCheckModel::data(const QModelIndex& index, int role) const
         {
         case EColumn_Name:
             return fileCheck->fileName();
+        case EColumn_Machine:
+            return QString::number(fileCheck->machineId());
         case EColumn_Exist:
             return fileCheck->fileExist();
         case EColumn_LastModified:
@@ -74,6 +76,8 @@ QVariant FileCheckModel::headerData(int section, Qt::Orientation orientation, in
             {
             case EColumn_Name:
                 return tr("Name");
+            case EColumn_Machine:
+                return tr("Machine");
             case EColumn_Exist:
                 return tr("Exist");
             case EColumn_LastModified:
@@ -137,13 +141,13 @@ void FileCheckModel::clearAll()
     m_fileList.clear();
 }
 
-void FileCheckModel::fileAdd(const QString& path, int id)
+void FileCheckModel::fileCheckAdd(const QString& path, int index, int machineId)
 {
-    FileCheck* fileCheck = new FileCheck(path, id, this);
+    FileCheck* fileCheck = new FileCheck(path, index, machineId, this);
 
     connect(fileCheck, SIGNAL(fileChanged(int)), this, SLOT(fileCheck_fileChanged(int)));
 
-    m_fileList.insert(id, fileCheck);
+    m_fileList.insert(index, fileCheck);
 }
 
 void FileCheckModel::fileCheck_fileChanged(int id)

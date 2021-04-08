@@ -4,6 +4,7 @@
 #include "file/FileView.h"
 #include "settings/SettingsView.h"
 #include "settings/Settings.h"
+#include "support/controls/StatusIndicator.h"
 
 #include "ui_MainWindow.h"
 
@@ -14,7 +15,20 @@
 #include <QToolButton>
 
 void addConnectionsFromCommandline(const QStringList &args, BrowserView *browser);
-void addConnectionsFromSettings(BrowserView *browser);
+bool addConnectionsFromSettings(BrowserView *browser);
+
+namespace
+{
+    const QString cStatusConnect("Connect");
+    const QString cStatusDisconnect("Disconnect");
+
+    const QString cStatusEnabled("Enabled");
+    const QString cStatusDisabled("Disabled");
+
+    const QString cStatusError("Error");
+    const QString cStatusWarning("Warning");
+
+}
 
 MainWindow::MainWindow(QWidget *parent) :
     MainWindowExt(parent),
@@ -27,18 +41,22 @@ MainWindow::MainWindow(QWidget *parent) :
     m_centralView(new CentralView(m_browserView, m_fileView, m_settingsView, this)),
 
     m_toolBarButtons(new QButtonGroup(this)),
-    m_lastView(CentralView::EView_none)
+    m_lastView(CentralView::EView_none),
+
+    m_statusDbs(new StatusIndicator("Database", Qt::green, this)),
+    m_statusFile(new StatusIndicator("FileCheck", Qt::green, this))
 {
     ui->setupUi(this);
 
-    this->setCentralWidget(m_centralView);
-
-    initializeConnection();
+    this->setCentralWidget(m_centralView);   
 
     initializeMenuBar();
     initializeToolBar();
+    initializeStatusBar();
 
     initializeWindow();
+
+    initializeConnection();
 }
 
 MainWindow::~MainWindow()
@@ -48,25 +66,26 @@ MainWindow::~MainWindow()
 
 void MainWindow::initializeMenuBar()
 {
-#if 0
-    QMenu *fileMenu = ui->menubar->addMenu(QObject::tr("&File"));
-    fileMenu->addAction(QObject::tr("Add &Connection..."), [&]() { m_browserView->addConnection(); });
-    fileMenu->addSeparator();
-    fileMenu->addAction(QObject::tr("&Quit"), []() { qApp->quit(); });
-
-    QMenu *helpMenu = ui->menubar->addMenu(QObject::tr("&Help"));
-    helpMenu->addAction(QObject::tr("About"), [&]() { m_browserView->about(); });
-    //helpMenu->addAction(QObject::tr("About Qt"), []() { qApp->aboutQt(); });
-#endif
+    //style
     createStyleMenu(ui->menuStyle);
 
+    //application close
     connect(ui->actionAbout, SIGNAL(triggered()), this, SLOT(aboutDialog()));
+}
+
+void MainWindow::initializeStatusBar()
+{
+    ui->statusbar->addPermanentWidget(m_statusDbs);
+    m_statusDbs->setMsg(cStatusDisconnect);
+
+    ui->statusbar->addPermanentWidget(m_statusFile);
+    m_statusFile->setMsg(cStatusDisabled);
 }
 
 void MainWindow::initializeToolBar()
 {
     //toolBar
-    QToolButton* fileManagerButton = new QToolButton(ui->toolBar);
+    QToolButton* fileManagerButton = new QToolButton(ui->toolbar);
     fileManagerButton->setAccessibleName("FileManager");
     fileManagerButton->setText("File\nManager");
     fileManagerButton->setToolButtonStyle(Qt::ToolButtonTextUnderIcon);
@@ -75,7 +94,7 @@ void MainWindow::initializeToolBar()
     fileManagerButton->setChecked(true);
     fileManagerButton->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Preferred);
 
-    QToolButton* dbsBrowserButton = new QToolButton(ui->toolBar);
+    QToolButton* dbsBrowserButton = new QToolButton(ui->toolbar);
     dbsBrowserButton->setAccessibleName("DatabaseBrowser");
     dbsBrowserButton->setText("Database\nBrowser");
     dbsBrowserButton->setToolButtonStyle(Qt::ToolButtonTextUnderIcon);
@@ -84,7 +103,7 @@ void MainWindow::initializeToolBar()
     dbsBrowserButton->setChecked(false);
     dbsBrowserButton->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Preferred);
 
-    QToolButton* settingsButton = new QToolButton(ui->toolBar);
+    QToolButton* settingsButton = new QToolButton(ui->toolbar);
     settingsButton->setAccessibleName("Settings");
     settingsButton->setText("Settings");
     settingsButton->setToolButtonStyle(Qt::ToolButtonTextUnderIcon);
@@ -96,10 +115,10 @@ void MainWindow::initializeToolBar()
     QWidget* spacer = new QWidget();
     spacer->setSizePolicy(QSizePolicy::Expanding,QSizePolicy::Expanding);
 
-    ui->toolBar->addWidget(fileManagerButton);
-    ui->toolBar->addWidget(dbsBrowserButton);
-    ui->toolBar->addWidget(spacer);
-    ui->toolBar->addWidget(settingsButton);
+    ui->toolbar->addWidget(fileManagerButton);
+    ui->toolbar->addWidget(dbsBrowserButton);
+    ui->toolbar->addWidget(spacer);
+    ui->toolbar->addWidget(settingsButton);
 
     m_toolBarButtons->addButton(fileManagerButton, CentralView::EView_FileManager);
     m_toolBarButtons->addButton(dbsBrowserButton, CentralView::EView_DatabaseBrowser);
@@ -158,46 +177,115 @@ void MainWindow::setView(CentralView::EView view)
 }
 
 void MainWindow::initializeConnection()
-{
+{    
     //addConnectionsFromCommandline(app.arguments(), &browser);
-    addConnectionsFromSettings(m_browserView);
+    bool succeed = addConnectionsFromSettings(m_browserView);
+    if(!succeed)
+    {
+        m_statusDbs->setOn(false);
+        m_statusDbs->setMsg(cStatusDisconnect);
+    }
+    else
+    {
+        m_statusDbs->setOn(true);
+        m_statusDbs->setMsg(cStatusConnect, Qt::green);
+    }
 
     if (QSqlDatabase::connectionNames().isEmpty())
     {
-        QMetaObject::invokeMethod(m_browserView, "addConnection", Qt::QueuedConnection);
-    }
+        /*
+         * void BrowserView::addConnectionDialog(const QString &driver, const QString &dbName, const QString &host,
+                                      const QString &user, const QString &passwd, int port)
+         */
+#if 0
+        QMetaObject::invokeMethod(m_browserView, "addConnectionDialog", Qt::QueuedConnection);
+#else
+        QSettings config(Settings::iniFilePath(), QSettings::IniFormat);
+        config.setIniCodec("UTF-8");
 
-    QObject::connect(m_browserView, &BrowserView::statusMessage, [this](const QString &text) {
-        ui->statusbar->showMessage(text);
-    });
+        QString driver = config.value(QString("odbc/driver")).toString();
+        QString host = config.value(QString("odbc/host")).toString();
+        QString database = config.value(QString("odbc/database")).toString();
+        QString user = config.value(QString("odbc/user")).toString();
+        QString pasword = config.value(QString("odbc/pasword")).toString();
+
+        QMetaObject::invokeMethod(m_browserView, "addConnectionDialog", Qt::QueuedConnection,
+                                  Q_ARG(QString, driver),
+                                  Q_ARG(QString, database),
+                                  Q_ARG(QString, host),
+                                  Q_ARG(QString, user),
+                                  Q_ARG(QString, pasword));
+#endif
+    }       
+
+    connect(m_browserView, SIGNAL(statusMessage(int, const QString &)), this, SLOT(browserView_statusMessage(int, const QString &)));
 }
+
+void MainWindow::browserView_statusMessage(int type, const QString &msg)
+{
+    ui->statusbar->showMessage(msg);
+    m_statusDbs->setToolTip(msg);
+
+    MessageType msgType = static_cast<MessageType>(type);
+
+    switch(msgType)
+    {
+    case MessageType::Info:
+        m_statusDbs->setOn(true);
+        m_statusDbs->setMsg(cStatusConnect, Qt::green);
+        break;
+    case MessageType::Warning:
+        m_statusDbs->setOn(true);
+        m_statusDbs->setMsg(cStatusWarning, Qt::yellow);
+        break;
+    case MessageType::Error:
+        m_statusDbs->setOn(true);
+        m_statusDbs->setMsg(cStatusError, Qt::red);
+        break;
+    case MessageType::Connect:
+        m_statusDbs->setOn(true);
+        m_statusDbs->setMsg(cStatusConnect, Qt::green);
+        break;
+    case MessageType::Disconnect:
+        m_statusDbs->setOn(false);
+        m_statusDbs->setMsg(cStatusDisconnect);
+        break;
+    }
+};
 
 void addConnectionsFromCommandline(const QStringList &args, BrowserView *browser)
 {
-    for (int i = 1; i < args.count(); ++i) {
+    for (int i = 1; i < args.count(); ++i)
+    {
         QUrl url(args.at(i), QUrl::TolerantMode);
-        if (!url.isValid()) {
+        if (!url.isValid())
+        {
             qWarning("Invalid URL: %s", qPrintable(args.at(i)));
             continue;
         }
-        QSqlError err = browser->addConnection(url.scheme(), url.path().mid(1), url.host(),
-                                               url.userName(), url.password(), url.port(-1));
+
+        QSqlError err = browser->addConnection(url.scheme(),
+                                               url.path().mid(1),
+                                               url.host(),
+                                               url.userName(),
+                                               url.password(),
+                                               url.port(-1));
+
         if (err.type() != QSqlError::NoError)
             qDebug() << "Unable to open connection:" << err;
     }
 }
 
-void addConnectionsFromSettings(BrowserView *browser)
+bool addConnectionsFromSettings(BrowserView *browser)
 {    
     QFile configFile(Settings::iniFilePath());
     if(!configFile.exists())
-        return;
-
-    QUrl url;
+        return false;
 
     QSettings config(Settings::iniFilePath(), QSettings::IniFormat);
     config.setIniCodec("UTF-8");
 
+    QUrl url;
     url.setScheme(config.value(QString("odbc/driver")).toString());
     url.setPath(config.value(QString("odbc/database")).toString());
     url.setHost(config.value(QString("odbc/host")).toString());
@@ -205,8 +293,18 @@ void addConnectionsFromSettings(BrowserView *browser)
     url.setPassword(config.value(QString("odbc/pasword")).toString());
     url.setPort(-1);
 
-    QSqlError err = browser->addConnection(url.scheme().toUpper(), url.path(), url.host(),
-                                           url.userName(), url.password(), url.port(-1));
+    QSqlError err = browser->addConnection(url.scheme().toUpper(),
+                                           url.path(),
+                                           url.host(),
+                                           url.userName(),
+                                           url.password(),
+                                           url.port(-1));
+
     if (err.type() != QSqlError::NoError)
+    {
         qDebug() << "Unable to open connection:" << err;
+        return false;
+    }
+
+    return true;
 }

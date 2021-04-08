@@ -63,6 +63,15 @@ QT_FORWARD_DECLARE_CLASS(QPushButton)
 QT_FORWARD_DECLARE_CLASS(QTextEdit)
 QT_FORWARD_DECLARE_CLASS(QSqlError)
 
+enum MessageType
+{
+    Info = 0,
+    Warning,
+    Error,
+    Connect,
+    Disconnect
+};
+
 class BrowserView: public QWidget, private Ui::BrowserView
 {
     Q_OBJECT
@@ -82,7 +91,8 @@ public slots:
     void exec();
     void showTable(const QString &table);
     void showMetaData(const QString &table);
-    void addConnection();
+    void addConnectionDialog(const QString &driver = "", const QString &dbName = "", const QString &host = "",
+                             const QString &user = "", const QString &passwd = "", int port = 0);
     void currentChanged() { updateActions(); }
     void about();
 
@@ -112,7 +122,7 @@ public slots:
     }
 
 signals:
-    void statusMessage(const QString &message);
+    void statusMessage(int type, const QString &message);
 };
 
 class CustomModel: public QSqlTableModel

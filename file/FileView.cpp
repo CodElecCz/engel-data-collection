@@ -24,6 +24,7 @@ FileView::FileView(QWidget *parent) :
     //ui->tableView->verticalHeader()->setVisible(false);
 
     ui->tableView->horizontalHeader()->setSectionResizeMode(FileCheckModel::EColumn_Name, QHeaderView::ResizeToContents);
+    ui->tableView->horizontalHeader()->setSectionResizeMode(FileCheckModel::EColumn_Machine, QHeaderView::ResizeToContents);
     ui->tableView->horizontalHeader()->setSectionResizeMode(FileCheckModel::EColumn_Exist, QHeaderView::ResizeToContents);
     ui->tableView->horizontalHeader()->setSectionResizeMode(FileCheckModel::EColumn_LastModified, QHeaderView::ResizeToContents);
 
@@ -48,11 +49,11 @@ void FileView::settings()
     QString path = config.value(QString("engel_machines/path")).toString();
     QString reportData = config.value(QString("engel_reportdata/file")).toString();
 
-    int id = 1;
+    int index = 1;
     QVariant vid;
     do
     {
-        QString sid = QString("engel_machines/id%1").arg(id);
+        QString sid = QString("engel_machines/id%1").arg(index);
 
         vid = config.value(sid);
 
@@ -60,14 +61,14 @@ void FileView::settings()
         {
             QString filePath = QString("%1%2%3").arg(path).arg(vid.toString()).arg(reportData);
 
-            m_model->fileAdd(filePath, id);
-            id++;
+            m_model->fileCheckAdd(filePath, index, vid.toInt());
+            index++;
         }
 
     }while(vid.isValid());
 }
 
-void FileView::on_pushButton_clicked(bool checked)
+void FileView::on_checkButton_clicked(bool checked)
 {
     if(checked)
     {

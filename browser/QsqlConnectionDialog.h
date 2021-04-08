@@ -53,6 +53,7 @@
 
 #include <QDialog>
 #include <QMessageBox>
+#include <QStatusBar>
 
 #include "ui_QsqlConnectionDialog.h"
 
@@ -71,13 +72,19 @@ public:
     int port() const;
     bool useInMemoryDatabase() const;
 
+    void setStatusBarMsg(const QString& msg);
+
+    void setDefaultParams(const QString& driver, const QString& dbs, const QString& user, const QString& password, const QString& host);
+
 private slots:
     void on_okButton_clicked();
     void on_cancelButton_clicked() { reject(); }
     void on_dbCheckBox_clicked() { ui.connGroupBox->setEnabled(!ui.dbCheckBox->isChecked()); }
 
 private:
-    Ui::QSqlConnectionDialogUi ui;
+    Ui::QSqlConnectionDialogUi  ui;
+    QStatusBar*                 m_statusBar;
+
 };
 
 #endif

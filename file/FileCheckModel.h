@@ -22,6 +22,7 @@ public:
     typedef enum _EColumn
     {
         EColumn_Name = 0,
+        EColumn_Machine,
         EColumn_Exist,
         EColumn_LastModified,
         EColumn_Dir,
@@ -33,7 +34,7 @@ public:
     void startAll();
     void stopAll();
     void clearAll();
-    void fileAdd(const QString& path, int id);
+    void fileCheckAdd(const QString& path, int index, int machineId);
 
 private slots:
     void fileCheck_fileChanged(int id);

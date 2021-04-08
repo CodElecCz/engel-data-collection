@@ -10,7 +10,7 @@ class FileCheck : public QObject
     Q_OBJECT
 
 public:
-    FileCheck(const QString& path, int id, QObject* parent = nullptr);
+    FileCheck(const QString& path, int index, int machineId, QObject* parent = nullptr);
 
     void start(int timeMs);
     void stop();
@@ -20,9 +20,10 @@ public:
     QString filePath() const;
     QString fileDir() const;
     QDateTime fileModified() const;
+    int machineId() const;
 
 signals:
-    void fileChanged(int id);
+    void fileChanged(int index);
 
 private:
 
@@ -53,7 +54,8 @@ private:
     QString         m_path;
     QTimer          m_timer;
     SFileCheckInfo  m_fileInfo;
-    int             m_id;
+    int             m_index;
+    int             m_machineId;
 };
 
 Q_DECLARE_METATYPE(FileCheck*)

@@ -5,11 +5,12 @@
 #include <QDebug>
 #include <QDir>
 
-FileCheck::FileCheck(const QString& path, int id, QObject* parent) :
+FileCheck::FileCheck(const QString& path, int index, int machineId, QObject* parent) :
     QObject(parent),
     m_path(path),
     m_fileInfo(),
-    m_id(id)
+    m_index(index),
+    m_machineId(machineId)
 {
     connect(&m_timer, SIGNAL(timeout()), this, SLOT(timer_timeout()));
 }
@@ -41,7 +42,7 @@ void FileCheck::timer_timeout()
     {
         m_fileInfo = info;
 
-        emit fileChanged(m_id);
+        emit fileChanged(m_index);
     }
 }
 
@@ -71,6 +72,11 @@ QDateTime FileCheck::fileModified() const
     QFileInfo fileInfo(m_path);
 
     return fileInfo.lastModified();
+}
+
+int FileCheck::machineId() const
+{
+    return m_machineId;
 }
 
 FileCheck::SFileCheckInfo FileCheck::getFileInfo() const

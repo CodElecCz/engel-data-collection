@@ -15,6 +15,7 @@ class BrowserView;
 class CentralView;
 class FileView;
 class SettingsView;
+class StatusIndicator;
 
 class MainWindow : public MainWindowExt
 {
@@ -29,11 +30,13 @@ private:
 
     void initializeMenuBar();
     void initializeToolBar();
+    void initializeStatusBar();
 
     void setView(CentralView::EView view);
 
 private slots:
     void toolBarButtons_buttonClicked(int);
+    void browserView_statusMessage(int type, const QString &message);
 
 private:
     Ui::MainWindow* ui;
@@ -46,6 +49,9 @@ private:
 
     QButtonGroup*       m_toolBarButtons;
     CentralView::EView  m_lastView;
+
+    StatusIndicator*    m_statusDbs;
+    StatusIndicator*    m_statusFile;
 };
 
 #endif // MAINWINDOW_H

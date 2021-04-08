@@ -74,7 +74,7 @@ BrowserView::BrowserView(QWidget *parent)
                                     "Please check the documentation how to build the "
                                     "Qt SQL plugins."));
 
-    emit statusMessage(tr("Ready."));
+    emit statusMessage(MessageType::Info, tr("Ready."));
 }
 
 BrowserView::~BrowserView()
@@ -88,11 +88,11 @@ void BrowserView::exec()
     table->setModel(model);
 
     if (model->lastError().type() != QSqlError::NoError)
-        emit statusMessage(model->lastError().text());
+        emit statusMessage(MessageType::Error, model->lastError().text());
     else if (model->query().isSelect())
-        emit statusMessage(tr("Query OK."));
+        emit statusMessage(MessageType::Info, tr("Query OK."));
     else
-        emit statusMessage(tr("Query OK, number of affected rows: %1").arg(
+        emit statusMessage(MessageType::Info, tr("Query OK, number of affected rows: %1").arg(
                            model->query().numRowsAffected()));
 
     updateActions();
@@ -105,26 +105,32 @@ QSqlError BrowserView::addConnection(const QString &driver, const QString &dbNam
 
     QSqlError err;
     QSqlDatabase db = QSqlDatabase::addDatabase(driver, QString("Browser%1").arg(++cCount));
+
     db.setDatabaseName(dbName);
     db.setHostName(host);
     db.setPort(port);
-    if (!db.open(user, passwd)) {
+    if (!db.open(user, passwd))
+    {
         err = db.lastError();
         db = QSqlDatabase();
         QSqlDatabase::removeDatabase(QString("Browser%1").arg(cCount));
     }
+
     connectionWidget->refresh();
 
     return err;
 }
 
-void BrowserView::addConnection()
+void BrowserView::addConnectionDialog(const QString &driver, const QString &dbName, const QString &host,
+                                      const QString &user, const QString &passwd, int port)
 {
     QSqlConnectionDialog dialog(this);
+    dialog.setDefaultParams(driver, dbName, user, passwd, host);
     if (dialog.exec() != QDialog::Accepted)
         return;
 
-    if (dialog.useInMemoryDatabase()) {
+    if (dialog.useInMemoryDatabase())
+    {
         QSqlDatabase::database("in_mem_db", false).close();
         QSqlDatabase::removeDatabase("in_mem_db");
         QSqlDatabase db = QSqlDatabase::addDatabase("QSQLITE", "in_mem_db");
@@ -147,13 +153,31 @@ void BrowserView::addConnection()
         q.exec("insert into Names values (2, 'Donald', 'Duck', 'Andeby')");
         q.exec("insert into Names values (3, 'Buck', 'Rogers', 'Paris')");
         q.exec("insert into Names values (4, 'Sherlock', 'Holmes', 'London')");
+
         connectionWidget->refresh();
-    } else {
-        QSqlError err = addConnection(dialog.driverName(), dialog.databaseName(), dialog.hostName(),
-                           dialog.userName(), dialog.password(), dialog.port());
+    }
+    else
+    {
+        QSqlError err = addConnection(dialog.driverName(),
+                                      dialog.databaseName(),
+                                      dialog.hostName(),
+                                      dialog.userName(),
+                                      dialog.password(),
+                                      dialog.port());
+
         if (err.type() != QSqlError::NoError)
+        {
+#if 0
             QMessageBox::warning(this, tr("Unable to open database"), tr("An error occurred while "
                                        "opening the connection: ") + err.text());
+#else
+            emit statusMessage(MessageType::Error, "Unable to open database: " + err.text());
+#endif
+        }
+        else
+        {
+            emit statusMessage(MessageType::Connect, "Database connection succesfull");
+        }
     }
 }
 
@@ -164,7 +188,7 @@ void BrowserView::showTable(const QString &t)
     model->setTable(connectionWidget->currentDatabase().driver()->escapeIdentifier(t, QSqlDriver::TableName));
     model->select();
     if (model->lastError().type() != QSqlError::NoError)
-        emit statusMessage(model->lastError().text());
+        emit statusMessage(MessageType::Error, model->lastError().text());
 
     table->setModel(model);
     table->setEditTriggers(QAbstractItemView::DoubleClicked|QAbstractItemView::EditKeyPressed);

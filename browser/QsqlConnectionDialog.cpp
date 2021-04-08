@@ -55,7 +55,8 @@
 #include <QSqlDatabase>
 
 QSqlConnectionDialog::QSqlConnectionDialog(QWidget *parent)
-    : QDialog(parent)
+    : QDialog(parent),
+      m_statusBar(new QStatusBar(this))
 {
     ui.setupUi(this);
 
@@ -64,7 +65,7 @@ QSqlConnectionDialog::QSqlConnectionDialog(QWidget *parent)
     // remove compat names
     drivers.removeAll("QMYSQL3");
     drivers.removeAll("QOCI8");
-    drivers.removeAll("QODBC3");
+    //drivers.removeAll("QODBC3");
     drivers.removeAll("QPSQL7");
     drivers.removeAll("QTDS7");
 
@@ -72,6 +73,13 @@ QSqlConnectionDialog::QSqlConnectionDialog(QWidget *parent)
         ui.dbCheckBox->setEnabled(false);
 
     ui.comboDriver->addItems(drivers);
+
+    ui.toolbarLayout->addWidget(m_statusBar);
+}
+
+void QSqlConnectionDialog::setStatusBarMsg(const QString& msg)
+{
+    m_statusBar->showMessage(msg);
 }
 
 QSqlConnectionDialog::~QSqlConnectionDialog()
@@ -106,6 +114,17 @@ QString QSqlConnectionDialog::hostName() const
 int QSqlConnectionDialog::port() const
 {
     return ui.portSpinBox->value();
+}
+
+void QSqlConnectionDialog::setDefaultParams(const QString& driver, const QString& dbs, const QString& user, const QString& password, const QString& host)
+{
+    ui.comboDriver->setCurrentText(driver);
+    ui.editDatabase->setText(dbs);
+    ui.editUsername->setText(user);
+    ui.editPassword->setText(password);
+    ui.editHostname->setText(host);
+
+    ui.dbCheckBox->setVisible(false);
 }
 
 bool QSqlConnectionDialog::useInMemoryDatabase() const
