@@ -37,6 +37,8 @@ MainWindow::MainWindow(QWidget *parent) :
 
     initializeMenuBar();
     initializeToolBar();
+
+    initializeWindow();
 }
 
 MainWindow::~MainWindow()

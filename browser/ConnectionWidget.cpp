@@ -48,7 +48,7 @@
 **
 ****************************************************************************/
 
-#include "connectionwidget.h"
+#include "ConnectionWidget.h"
 
 #include <QtWidgets>
 #include <QtSql>
@@ -57,14 +57,19 @@ ConnectionWidget::ConnectionWidget(QWidget *parent)
     : QWidget(parent)
 {
     QVBoxLayout *layout = new QVBoxLayout(this);
+    layout->setContentsMargins(0,0,10,0);
+
     tree = new QTreeWidget(this);
     tree->setObjectName(QLatin1String("tree"));
     tree->setHeaderLabels(QStringList(tr("database")));
-    tree->header()->setSectionResizeMode(QHeaderView::Stretch);
+    tree->header()->setSectionResizeMode(QHeaderView::Stretch);    
+
     QAction *refreshAction = new QAction(tr("Refresh"), tree);
     metaDataAction = new QAction(tr("Show Schema"), tree);
+
     connect(refreshAction, &QAction::triggered, this, &ConnectionWidget::refresh);
     connect(metaDataAction, &QAction::triggered, this, &ConnectionWidget::showMetaData);
+
     tree->addAction(refreshAction);
     tree->addAction(metaDataAction);
     tree->setContextMenuPolicy(Qt::ActionsContextMenu);
@@ -162,6 +167,7 @@ void ConnectionWidget::showMetaData()
     QTreeWidgetItem *cItem = tree->currentItem();
     if (!cItem || !cItem->parent())
         return;
+
     setActive(cItem->parent());
     emit metaDataRequested(cItem->text(0));
 }

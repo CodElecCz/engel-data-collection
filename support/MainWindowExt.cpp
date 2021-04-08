@@ -12,6 +12,9 @@
 #include <QMenuBar>
 #include <QFrame>
 #include <QKeyEvent>
+#include <QMessageBox>
+#include <QSettings>
+#include <QCoreApplication>
 
 MainWindowExt::MainWindowExt(QWidget *parent) :
     QMainWindow(parent),
@@ -276,4 +279,53 @@ void MainWindowExt::keyPressEvent(QKeyEvent *event)
             this->showFullScreen();
         }
     }
+}
+
+void MainWindowExt::closeEvent(QCloseEvent *event)
+{
+    bool close = closeDialog();
+    if(!close)
+        event->ignore();
+}
+
+bool MainWindowExt::closeDialog()
+{
+    QMessageBox::StandardButton reply;
+    reply = QMessageBox::question(this, "Exit", "Close application?", QMessageBox::Yes|QMessageBox::No);
+    if (reply == QMessageBox::Yes)
+    {
+        //write settings
+        writeAppSettings();
+
+        hide();
+
+        QApplication::quit();
+    }
+
+    return (reply == QMessageBox::Yes);
+}
+
+void MainWindowExt::readAppSettings()
+{
+    QSettings settings(QCoreApplication::organizationName(), QCoreApplication::applicationName());
+
+    settings.beginGroup("MainWindow");
+    restoreGeometry(settings.value("geometry").toByteArray());
+    restoreState(settings.value("windowState").toByteArray());
+    settings.endGroup();
+}
+
+void MainWindowExt::writeAppSettings()
+{
+    QSettings settings(QCoreApplication::organizationName(), QCoreApplication::applicationName());
+
+    settings.beginGroup("MainWindow");
+    settings.setValue("geometry", saveGeometry());
+    settings.setValue("windowState", saveState());
+    settings.endGroup();
+}
+
+void MainWindowExt::initializeWindow()
+{
+    readAppSettings();
 }
