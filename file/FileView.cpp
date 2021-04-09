@@ -27,6 +27,8 @@ FileView::FileView(QWidget *parent) :
     ui->tableView->horizontalHeader()->setSectionResizeMode(FileCheckModel::EColumn_FileSize, QHeaderView::ResizeToContents);
     ui->tableView->horizontalHeader()->setSectionResizeMode(FileCheckModel::EColumn_LastModified, QHeaderView::ResizeToContents);
     ui->tableView->horizontalHeader()->setSectionResizeMode(FileCheckModel::EColumn_LastCheck, QHeaderView::ResizeToContents);
+    ui->tableView->horizontalHeader()->setSectionResizeMode(FileCheckModel::EColumn_NbOfRecords, QHeaderView::ResizeToContents);
+    ui->tableView->horizontalHeader()->setSectionResizeMode(FileCheckModel::EColumn_NbOfRecordsProcessed, QHeaderView::ResizeToContents);
 
     ui->tableView->horizontalHeader()->setSectionResizeMode(FileCheckModel::EColumn_Dir, QHeaderView::Stretch);
 
@@ -39,15 +41,15 @@ FileView::~FileView()
     delete ui;
 }
 
-void FileView::setView()
+void FileView::setView(QSqlDatabase dbs)
 {
-    settings();
+    settings(dbs);
 
     ui->checkButton->setEnabled(true);
 }
 
-void FileView::settings()
-{
+void FileView::settings(QSqlDatabase dbs)
+{    
     QFile configFile(Settings::iniFilePath());
     if(!configFile.exists())
         return;
@@ -75,6 +77,8 @@ void FileView::settings()
         }
 
     }while(vid.isValid());
+
+    m_model->checkDatabase(dbs);
 
     uint32_t interval = config.value(QString("engel_machines/interval_ms")).toUInt();
     m_model->checkInterval(interval);

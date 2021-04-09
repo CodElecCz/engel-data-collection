@@ -2,6 +2,7 @@
 #define FILECHECKMODEL_H
 
 #include <QAbstractTableModel>
+#include <QSqlDatabase>
 
 class FileCheck;
 
@@ -27,16 +28,19 @@ public:
         EColumn_FileSize,
         EColumn_LastCheck,
         EColumn_LastModified,
+        EColumn_NbOfRecords,
+        EColumn_NbOfRecordsProcessed,
         EColumn_Dir,
 
         /*...*/
         EColumn_Size
     } EScenarioColumn;
 
-    void checkStartAll(int delay = -1);
+    void checkStartAll(int intervalShiftMs = -1);
     void checkStopAll();
     void checkAdd(const QString& path, int index, int machineId);
     void checkInterval(uint32_t intervalMs);
+    void checkDatabase(QSqlDatabase dbs);
 
     void clearAll();
 

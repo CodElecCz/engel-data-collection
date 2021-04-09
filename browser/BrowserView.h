@@ -78,6 +78,8 @@ public:
     void deleteRow();
     void updateActions();
 
+    QSqlDatabase currentDatabase() const;
+
 public slots:
     void exec();
     void showTable(const QString &table);

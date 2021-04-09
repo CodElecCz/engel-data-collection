@@ -57,6 +57,10 @@ QVariant FileCheckModel::data(const QModelIndex& index, int role) const
             return fileCheck->fileCheckTime().toString("hh:mm:ss");
         case EColumn_Dir:
             return fileCheck->fileDir();
+        case EColumn_NbOfRecords:
+            return QString::number(fileCheck->nbOfRecords());
+        case EColumn_NbOfRecordsProcessed:
+            return QString::number(fileCheck->nbOfRecordsProcessed());
         }
     }
     else if (role == Qt::CheckStateRole)
@@ -94,6 +98,11 @@ QVariant FileCheckModel::headerData(int section, Qt::Orientation orientation, in
                 return tr("Check");
             case EColumn_Dir:
                 return tr("Directory");
+            case EColumn_NbOfRecords:
+                return tr("Rec. New");
+            case EColumn_NbOfRecordsProcessed:
+                return tr("Rec.");
+
 
             default:
                 return tr("unknown");
@@ -126,10 +135,10 @@ Qt::ItemFlags FileCheckModel::flags(const QModelIndex &index) const
      return flags;
 }
 
-void FileCheckModel::checkStartAll(int delayMs)
+void FileCheckModel::checkStartAll(int intervalShiftMs)
 {
-    if(delayMs>=0)
-        m_intervalShiftMs = delayMs;
+    if(intervalShiftMs>=0)
+        m_intervalShiftMs = intervalShiftMs;
 
     int delay = 0;
     foreach(auto file, m_fileList.values())
@@ -160,6 +169,14 @@ void FileCheckModel::clearAll()
 void FileCheckModel::checkInterval(uint32_t intervalMs)
 {
     m_intervalMs = intervalMs;
+}
+
+void FileCheckModel::checkDatabase(QSqlDatabase dbs)
+{
+    foreach(auto file, m_fileList.values())
+    {
+        file->setDatabase(dbs);
+    }
 }
 
 void FileCheckModel::checkAdd(const QString& path, int index, int machineId)

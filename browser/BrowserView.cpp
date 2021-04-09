@@ -70,10 +70,12 @@ BrowserView::BrowserView(QWidget *parent)
     table->addAction(selectAction);
 
     if (QSqlDatabase::drivers().isEmpty())
+    {
         QMessageBox::information(this, tr("No database drivers found"),
-                                 tr("This demo requires at least one Qt database driver. "
+                                 tr("This app requires at least one Qt database driver. "
                                     "Please check the documentation how to build the "
                                     "Qt SQL plugins."));
+    }
 
     emit statusMessage(MessageType::Info, tr("Ready."));
 }
@@ -97,6 +99,11 @@ void BrowserView::exec()
                            model->query().numRowsAffected()));
 
     updateActions();
+}
+
+QSqlDatabase BrowserView::currentDatabase() const
+{
+    return connectionWidget->currentDatabase();
 }
 
 QSqlError BrowserView::addConnection(const QString &driver, const QString &dbName, const QString &host,

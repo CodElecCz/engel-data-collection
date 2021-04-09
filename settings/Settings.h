@@ -26,6 +26,9 @@ public:
 
     static QString iniFilePath();
     static QString logFilePath();
+
+    static void writeLastInsert(const QString& machineId, const QDateTime& lastInsert);
+    static void readLastInsert(const QString& machineId, QDateTime& lastInsert);
 };
 
 #endif // SETTINGS_H

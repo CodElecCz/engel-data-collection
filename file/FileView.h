@@ -2,6 +2,7 @@
 #define FILEVIEW_H
 
 #include <QWidget>
+#include <QSqlDatabase>
 
 namespace Ui {
 class FileView;
@@ -17,13 +18,13 @@ public:
     explicit FileView(QWidget *parent = nullptr);
     ~FileView();
 
-    void setView();
+    void setView(QSqlDatabase dbs);
 
 signals:
     void statusMessage(int type, const QString &message);
 
 private:
-    void settings();
+    void settings(QSqlDatabase dbs);
 
 private slots:    
     void on_checkButton_clicked(bool checked);

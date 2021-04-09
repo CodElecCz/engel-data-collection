@@ -197,7 +197,7 @@ void MainWindow::initializeConnection()
         m_statusDbs->setOn(true);
         m_statusDbs->setMsg(cStatusConnect, Qt::green);
 
-        m_fileView->setView();
+        m_fileView->setView(m_browserView->currentDatabase());
     }
 
     if (QSqlDatabase::connectionNames().isEmpty())
@@ -366,8 +366,8 @@ void addConnectionsFromCommandline(const QStringList &args, BrowserView *browser
 
 bool addConnectionsFromSettings(BrowserView *browser)
 {    
-    QFile configFile(Settings::iniFilePath());
-    if(!configFile.exists())
+    QFile iniFile(Settings::iniFilePath());
+    if(!iniFile.exists())
         return false;
 
     QSettings config(Settings::iniFilePath(), QSettings::IniFormat);
