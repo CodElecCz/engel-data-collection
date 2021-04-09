@@ -142,7 +142,7 @@ int main(int argc, char *argv[])
     try
     {
         MainWindow mainWindow;
-        mainWindow.setWindowTitle(QCoreApplication::applicationName());
+        mainWindow.setWindowTitle(QString("%1 (%2)").arg(QCoreApplication::applicationName()).arg(QCoreApplication::applicationVersion()));
         mainWindow.show();
 
         app.exec();
