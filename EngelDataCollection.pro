@@ -18,6 +18,7 @@ SOURCES += \
     browser/ConnectionWidget.cpp \
     log/Log.cpp \
     log/LogView.cpp \
+    pdf/PdfView.cpp \
     settings/Settings.cpp \
     settings/SettingsView.cpp \
     main.cpp \
@@ -39,6 +40,7 @@ HEADERS += \
     browser/QsqlConnectionDialog.h \
     log/Log.h \
     log/LogView.h \
+    pdf/PdfView.h \
     settings/Settings.h \
     settings/SettingsView.h \
     support/MainWindowExt.h \
@@ -54,6 +56,7 @@ FORMS += \
     browser/BrowserView.ui \
     browser/QsqlConnectionDialog.ui \
     log/LogView.ui \
+    pdf/PdfView.ui \
     settings/SettingsView.ui \
     support/about/AboutDialog.ui
 

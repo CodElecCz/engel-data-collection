@@ -220,6 +220,7 @@ void FileCheck::processFile(SFileCheckInfo& info)
             int nbOfRecords = -1;
             int nbOfRecordsProcessed = 0;
             bool startRecord = false;
+            QString sdt = info.lastInserted.toString("yyyyMMdd") + "," + info.lastInserted.toString("hh:mm:ss");
             while(!in.atEnd())
             {
                 QString line = in.readLine();
@@ -250,7 +251,10 @@ void FileCheck::processFile(SFileCheckInfo& info)
                     else
                     {
                         if(info.lastInserted.isValid())
-                            startRecord = (line.contains(info.lastInserted.toString("yyyyMMdd") + "," + info.lastInserted.toString("hh:mm:ss")));
+                        {
+                            //startRecord = (line.left(sdt.size()).contains(sdt));
+                            startRecord = (0==QString::compare(line.left(sdt.size()), sdt));
+                        }
 
                         nbOfRecordsProcessed++;
                     }
