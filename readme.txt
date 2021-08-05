@@ -29,3 +29,8 @@ D:\Work\Development\Qt\EngelDataCollection\MACHINES\194365\E63_JOBS\ReportDataIM
 D:\Work\Development\Qt\EngelDataCollection\MACHINES\198579\E63_JOBS\ReportDataIMM.dat
 D:\Work\Development\Qt\EngelDataCollection\MACHINES\207499\E63_JOBS\ReportDataIMM.dat
 D:\Work\Development\Qt\EngelDataCollection\MACHINES\219487\E63_JOBS\ReportDataIMM.dat
+
+DATE,TIME,COUNT,SetDescPrt,ActCntMld,SetDescMld,ActCntCyc,ActTimCyc,ActStsMach
+20210209,21:05:23,1,"445794/695576",2,"M-11175",6,35.23,"0A011"
+20210209,21:06:25,2,"445794/695576",2,"M-11175",7,0.85,"0A011"
+20210209,21:10:30,3,"445794/695576",2,"M-11175",8,1.81,"0A011"
